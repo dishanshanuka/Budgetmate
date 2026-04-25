@@ -9,6 +9,7 @@ import Investments from "./pages/Investments";
 import Analytics from "./pages/Analytics";
 import Expenses from "./pages/Expenses";
 import Bills from "./pages/Bills";
+import Settings from "./pages/Settings";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/expenses" element={<Expenses />} />
         <Route path="/bills" element={<Bills />} />
+        <Route path="/settings" element={<Settings />} />
 
       </Routes>
     </Router>
