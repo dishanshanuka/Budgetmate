@@ -10,7 +10,7 @@ const DashboardLayout = ({ children, title }) => {
 
       {/*  Main Content */}
       <div className="flex-1 ml-64 flex flex-col">
-        {/* 🔍 Top Navbar */}
+        {/* Top Navbar */}
         <header className="h-20 bg-white/50 backdrop-blur-md border-b border-slate-100 px-10 flex items-center justify-between sticky top-0 z-40">
           <div className="relative w-96 group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
