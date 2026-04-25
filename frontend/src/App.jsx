@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 //import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import MyWallet from "./pages/MyWallet";
+
 
 function App() {
   return (
@@ -14,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/my-wallet" element={<MyWallet />} />
       </Routes>
     </Router>
   );
