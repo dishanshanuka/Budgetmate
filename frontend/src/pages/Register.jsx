@@ -1,31 +1,48 @@
 import React, { useState } from 'react';
-import './App.css';
+import { Link, useNavigate } from 'react-router-dom';
+import '../App.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000';
 
-function Login() {
+function Register() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('');
+  
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
     setStatus('');
 
+    if (password !== confirmPassword) {
+      setMessage('Passwords do not match');
+      setStatus('error');
+      return;
+    }
+
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await response.json();
       setMessage(data.message || 'Unexpected response');
       setStatus(response.ok ? 'success' : 'error');
+      
+      if (response.ok) {
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }
     } catch (error) {
       setMessage('Could not connect to backend');
       setStatus('error');
@@ -36,11 +53,22 @@ function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>Budgetmate</h1>
-          <p>Welcome to your tracking daily expense </p>
+          <h1>Join Budgetmate</h1>
+          <p>Create an account to start tracking</p>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Name</label>
+            <input
+              type="text"
+              placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
           <div className="input-group">
             <label>Email</label>
             <input
@@ -63,27 +91,24 @@ function Login() {
             />
           </div>
 
-          <div className="forgot-row">
-            <a href="#">Forgot Password?</a>
+          <div className="input-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              placeholder="********"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Submit
+          <button type="submit" className="submit-btn" style={{ marginTop: '20px' }}>
+            Register
           </button>
         </form>
 
-        <div className="divider">
-          <span>Or sign in with</span>
-        </div>
-
-        <div className="social-row">
-          <button type="button" className="social-btn google">G</button>
-          <button type="button" className="social-btn linkedin">in</button>
-          <button type="button" className="social-btn github">Git</button>
-        </div>
-
-        <div className="footer-text">
-          Not registered yet? <a href="#">Sign Up Now</a>
+        <div className="footer-text" style={{ marginTop: '20px' }}>
+          Already have an account? <Link to="/login">Sign In</Link>
         </div>
 
         {message && (
@@ -96,4 +121,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

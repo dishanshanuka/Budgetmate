@@ -1,0 +1,11 @@
+# Backend dependencies and virtual environments
+backend/__pycache__/
+backend/venv/
+backend/env/
+backend/.venv/
+
+# Environment Variables
+backend/.env
+
+# Oracle Database Wallet
+backend/wallet/
