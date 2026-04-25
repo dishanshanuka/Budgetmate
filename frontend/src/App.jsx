@@ -8,6 +8,7 @@ import MyWallet from "./pages/MyWallet";
 import Investments from "./pages/Investments";
 import Analytics from "./pages/Analytics";
 import Expenses from "./pages/Expenses";
+import Bills from "./pages/Bills";
 
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
         <Route path="/investments" element={<Investments />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/expenses" element={<Expenses />} />
+        <Route path="/bills" element={<Bills />} />
+
       </Routes>
     </Router>
   );

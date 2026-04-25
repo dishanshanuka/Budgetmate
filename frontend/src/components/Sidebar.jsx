@@ -1,6 +1,15 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom'; 
-import { LayoutDashboard, Wallet, TrendingUp, CreditCard, Settings, LogOut, PieChart } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  Wallet, 
+  TrendingUp, 
+  CreditCard, 
+  Settings, 
+  LogOut, 
+  PieChart, 
+  CalendarDays // 👈 Bills වලට මේ icon එක පට්ට
+} from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation(); 
@@ -11,6 +20,7 @@ const Sidebar = () => {
     { icon: TrendingUp, label: 'Investments', path: '/investments' },
     { icon: CreditCard, label: 'Expenses', path: '/expenses' },
     { icon: PieChart, label: 'Analytics', path: '/analytics' },
+    { icon: CalendarDays, label: 'Bills', path: '/bills' }, // 👈 මෙතනට තමයි Bills පේජ් එක එන්නේ
   ];
 
   return (
@@ -23,7 +33,6 @@ const Sidebar = () => {
 
       <nav className="flex-1 px-4 space-y-2">
         {menuItems.map((item, index) => {
-          
           const isActive = location.pathname === item.path;
 
           return (
@@ -33,7 +42,7 @@ const Sidebar = () => {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                 isActive 
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' 
-                  : 'text-slate-500 hover:bg-slate-50'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
               <item.icon size={18} />
