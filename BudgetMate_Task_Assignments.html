@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BudgetMate - Team Task Allocations & Integration Plan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-code: #0d1117;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 32px;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding: 48px 32px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15));
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(139,92,246,0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .header .logo-emoji { font-size: 56px; margin-bottom: 16px; }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .header .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .header .date-badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 6px 16px;
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        /* --- DOWNLOAD BAR --- */
+        .download-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .download-bar button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59,130,246,0.35); }
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border) !important;
+        }
+        .btn-secondary:hover { background: #2d3a4f; transform: translateY(-2px); }
+
+        /* --- WARNING BOX --- */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid var(--accent-amber);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 40px;
+        }
+        .warning-box .warning-title {
+            font-weight: 700;
+            color: var(--accent-amber);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .warning-box p { font-size: 14px; color: var(--text-secondary); }
+        .warning-box code {
+            background: rgba(245,158,11,0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-amber);
+        }
+
+        /* --- SECTIONS --- */
+        .section {
+            margin-bottom: 48px;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title .icon {
+            font-size: 28px;
+        }
+
+        /* --- PIPELINE DIAGRAM --- */
+        .pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 24px 0;
+        }
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .pipeline-step:hover { border-color: var(--accent-blue); transform: translateX(4px); }
+        .pipeline-connector {
+            display: flex;
+            justify-content: center;
+            padding: 2px 0;
+        }
+        .pipeline-connector svg { display: block; }
+        .pipeline-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .pipeline-info { flex: 1; }
+        .pipeline-info .feature { font-weight: 600; font-size: 14px; }
+        .pipeline-info .name { font-size: 13px; color: var(--text-secondary); }
+        .pipeline-badge {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        .badge-high { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+        .badge-medium { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .badge-easy { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+
+        /* --- TABLE --- */
+        .overview-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        .overview-table thead th {
+            background: rgba(59,130,246,0.12);
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-blue);
+            border-bottom: 1px solid var(--border);
+        }
+        .overview-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(51,65,85,0.5);
+            color: var(--text-secondary);
+        }
+        .overview-table tbody tr:last-child td { border-bottom: none; }
+        .overview-table tbody tr:hover { background: rgba(59,130,246,0.04); }
+        .overview-table td:nth-child(2) { color: var(--text-primary); font-weight: 600; }
+
+        /* --- GIT RULES --- */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .rule-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+        .rule-card .rule-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(59,130,246,0.15);
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .rule-card .rule-text { font-size: 14px; color: var(--text-secondary); }
+        .rule-card .rule-text strong { color: var(--text-primary); }
+        .rule-card code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-cyan);
+        }
+
+        /* --- TASK CARDS --- */
+        .task-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        .task-card.pr1::before { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .task-card.pr2::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .task-card.pr3::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .task-card.pr4::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .task-card.pr5::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .task-card.pr6::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .task-card.pr7::before { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+        .task-card.pr8::before { background: linear-gradient(90deg, #8b5cf6, #c084fc); }
+        .task-card.pr9::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .task-card.pr10::before { background: linear-gradient(90deg, #10b981, #6ee7b7); }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .task-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .meta-tag {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(100,116,139,0.15);
+            color: var(--text-secondary);
+            border: 1px solid rgba(100,116,139,0.2);
+        }
+        .meta-tag.assignee {
+            background: rgba(59,130,246,0.15);
+            color: var(--accent-blue);
+            border-color: rgba(59,130,246,0.3);
+            font-weight: 700;
+        }
+
+        .task-objectives {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .task-section-label {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .task-section-label.db { color: var(--accent-amber); }
+        .task-section-label.api { color: var(--accent-green); }
+        .task-section-label.ui { color: var(--accent-cyan); }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+        .task-list li {
+            padding: 6px 0 6px 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            position: relative;
+        }
+        .task-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--text-muted);
+        }
+        .task-list li code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-cyan);
+        }
+        .task-list li strong { color: var(--text-primary); }
+
+        /* --- CODE BLOCKS --- */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        .code-block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(51,65,85,0.3);
+            border-bottom: 1px solid var(--border);
+        }
+        .code-block-lang {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+        .code-block pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.7;
+            color: #e2e8f0;
+        }
+        .code-block pre .keyword { color: #c084fc; }
+        .code-block pre .string { color: #34d399; }
+        .code-block pre .comment { color: #64748b; font-style: italic; }
+        .code-block pre .function { color: #60a5fa; }
+        .code-block pre .type { color: #fbbf24; }
+
+        /* --- REFERENCE TEMPLATE --- */
+        .reference-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 28px;
+        }
+        .reference-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            margin-top: 48px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            body { background: #fff; color: #1a1a1a; }
+            .container { max-width: 100%; padding: 20px; }
+            .download-bar { display: none; }
+            .header { background: #f8fafc; border-color: #e2e8f0; }
+            .header h1 { -webkit-text-fill-color: #1e40af; }
+            .header .subtitle { color: #475569; }
+            .warning-box { background: #fffbeb; border-color: #fbbf24; }
+            .warning-box .warning-title { color: #b45309; }
+            .warning-box p { color: #475569; }
+            .task-card { background: #fff; border-color: #e2e8f0; box-shadow: none; }
+            .pipeline-step { background: #f8fafc; border-color: #e2e8f0; }
+            .overview-table thead th { background: #f1f5f9; color: #1e40af; border-color: #e2e8f0; }
+            .overview-table tbody td { color: #475569; border-color: #e2e8f0; }
+            .overview-table td:nth-child(2) { color: #1a1a1a; }
+            .rule-card { background: #f8fafc; border-color: #e2e8f0; }
+            .code-block { background: #f8fafc; border-color: #e2e8f0; }
+            .code-block pre { color: #1a1a1a; }
+            .reference-card { background: #f8fafc; border-color: #e2e8f0; }
+            .meta-tag { border-color: #cbd5e1; }
+            .task-list li { color: #475569; }
+            .task-section-label.db { color: #b45309; }
+            .task-section-label.api { color: #047857; }
+            .task-section-label.ui { color: #0891b2; }
+            .footer { color: #94a3b8; }
+            .section-title, .task-header h3 { color: #1a1a1a; }
+            .task-objectives { color: #475569; }
+            .pipeline-info .name { color: #64748b; }
+            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 20px 16px; }
+            .header { padding: 32px 20px; }
+            .header h1 { font-size: 24px; }
+            .task-card { padding: 20px; }
+            .pipeline-step { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo-emoji">📊</div>
+            <h1>BudgetMate</h1>
+            <div class="subtitle">Team Task Allocations & Integration Plan — A complete sequential PR pipeline for 10 members to build a full-stack expense tracking application using React, FastAPI, and Oracle Cloud Database.</div>
+            <div class="date-badge">📅 Generated: June 5, 2026</div>
+        </div>
+
+        <!-- DOWNLOAD BAR -->
+        <div class="download-bar">
+            <button class="btn-primary" onclick="window.print()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Save as PDF / Print
+            </button>
+            <button class="btn-secondary" onclick="document.body.style.background = document.body.style.background === 'white' ? '#0f172a' : 'white';">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                Toggle Light/Dark
+            </button>
+        </div>
+
+        <!-- WARNING BOX -->
+        <div class="warning-box">
+            <div class="warning-title">⚠️ Database Status Notice</div>
+            <p>The Oracle Autonomous Database instance may be <strong>Stopped/Paused</strong> on Oracle Cloud (auto-pause after inactivity). Before running the backend, log in to the <strong>Oracle Cloud Console</strong>, navigate to your Autonomous Database, and click <strong>"Start"</strong> to resume. If you see a <code>DPY-6001: Service not registered</code> error, this is the cause.</p>
+        </div>
+
+        <!-- PR PIPELINE SEQUENCE -->
+        <div class="section">
+            <div class="section-title"><span class="icon">📅</span> Pull Request Pipeline (Sequential Order)</div>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#3b82f6,#06b6d4);">1</div>
+                    <div class="pipeline-info"><div class="feature">Database Setup & DDL</div><div class="name">Anjana</div></div>
+                    <div class="pipeline-badge badge-medium">Medium</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#8b5cf6,#a78bfa);">2</div>
+                    <div class="pipeline-info"><div class="feature">Auth Session & Route Protection</div><div class="name">Dinesh</div></div>
+                    <div class="pipeline-badge badge-medium">Medium</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#ec4899,#f472b6);">3</div>
+                    <div class="pipeline-info"><div class="feature">Wallet & Accounts CRUD</div><div class="name">Bhashitha</div></div>
+                    <div class="pipeline-badge badge-high">High</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#ef4444,#f87171);">4</div>
+                    <div class="pipeline-info"><div class="feature">Ledger & Balances Trigger</div><div class="name">Dishan</div></div>
+                    <div class="pipeline-badge badge-high">High</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#f59e0b,#fbbf24);">5</div>
+                    <div class="pipeline-info"><div class="feature">Budgets & Spent Trigger</div><div class="name">Omashi</div></div>
+                    <div class="pipeline-badge badge-high">High</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#10b981,#34d399);">6</div>
+                    <div class="pipeline-info"><div class="feature">Recurring Bills Tracker</div><div class="name">Rasanjalee</div></div>
+                    <div class="pipeline-badge badge-medium">Medium</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#06b6d4,#22d3ee);">7</div>
+                    <div class="pipeline-info"><div class="feature">Investment Portfolio</div><div class="name">Rasodya</div></div>
+                    <div class="pipeline-badge badge-medium">Medium</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#8b5cf6,#c084fc);">8</div>
+                    <div class="pipeline-info"><div class="feature">Analytics & Charts Engine</div><div class="name">Divya</div></div>
+                    <div class="pipeline-badge badge-medium">Medium</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#3b82f6,#60a5fa);">9</div>
+                    <div class="pipeline-info"><div class="feature">Dashboard Summary & UI</div><div class="name">Vijan</div></div>
+                    <div class="pipeline-badge badge-medium">Medium</div>
+                </div>
+                <div class="pipeline-connector"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M12 20l-4-4M12 20l4-4" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div class="pipeline-step">
+                    <div class="pipeline-number" style="background: linear-gradient(135deg,#10b981,#6ee7b7);">10</div>
+                    <div class="pipeline-info"><div class="feature">Profile & Settings <span style="color:#34d399;">(Easy Task)</span></div><div class="name">Kavinda</div></div>
+                    <div class="pipeline-badge badge-easy">Easy</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERVIEW TABLE -->
+        <div class="section">
+            <div class="section-title"><span class="icon">👥</span> Team Assignments Overview</div>
+            <table class="overview-table">
+                <thead>
+                    <tr><th>PR #</th><th>Teammate</th><th>Assigned Feature</th><th>Scope</th><th>Complexity</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>PR 1</td><td>Anjana</td><td>Database Setup & Registration Verification</td><td>Full Stack (DDL + Email Check API/UI)</td><td>Medium</td></tr>
+                    <tr><td>PR 2</td><td>Dinesh</td><td>Auth Session & Route Protection Guards</td><td>Full Stack (JWT Verification + Auth UI)</td><td>Medium</td></tr>
+                    <tr><td>PR 3</td><td>Bhashitha</td><td>Wallet & Accounts Management</td><td>Full Stack (Accounts API/UI)</td><td>High</td></tr>
+                    <tr><td>PR 4</td><td>Dishan</td><td>Transaction Ledger & Balance Trigger</td><td>Full Stack (Transactions + Trigger)</td><td>High</td></tr>
+                    <tr><td>PR 5</td><td>Omashi</td><td>Expense Categories & Budgets Tracker</td><td>Full Stack (Budgets + Trigger)</td><td>High</td></tr>
+                    <tr><td>PR 6</td><td>Rasanjalee</td><td>Recurring Bills & Schedule Manager</td><td>Full Stack (Bills API/UI)</td><td>Medium</td></tr>
+                    <tr><td>PR 7</td><td>Rasodya</td><td>Investment Portfolio Tracker</td><td>Full Stack (Assets API/UI)</td><td>Medium</td></tr>
+                    <tr><td>PR 8</td><td>Divya</td><td>Analytics Queries & Chart Engine</td><td>Full Stack (Aggregates + Recharts)</td><td>Medium</td></tr>
+                    <tr><td>PR 9</td><td>Vijan</td><td>Dashboard Overview API & Connection</td><td>Full Stack (Dashboard Integration)</td><td>Medium</td></tr>
+                    <tr><td>PR 10</td><td>Kavinda</td><td>User Preferences & Profile (Easy Task)</td><td>Full Stack (Profile & Reset API/UI)</td><td>Easy</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- GIT RULES -->
+        <div class="section">
+            <div class="section-title"><span class="icon">🌿</span> Git Branching & Workflow Rules</div>
+            <div class="rules-grid">
+                <div class="rule-card">
+                    <div class="rule-num">1</div>
+                    <div class="rule-text"><strong>Branch Naming:</strong> Pull the latest <code>main</code> once the preceding PR is merged. Create a branch: <code>feature/pr&lt;N&gt;-&lt;feature-name&gt;</code> (e.g., <code>feature/pr3-accounts</code>).</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-num">2</div>
+                    <div class="rule-text"><strong>Database Schema Integrity:</strong> Since everyone connects to the same Oracle Autonomous Database, <strong>do not modify existing tables</strong> without consulting the team. Write additive stored procedures only.</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-num">3</div>
+                    <div class="rule-text"><strong>Commit Messages:</strong> Write descriptive commits referencing modified components (e.g., <code>feat(api): add create_account stored procedure call</code>).</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== DETAILED TASK CARDS ===== -->
+        <div class="section">
+            <div class="section-title"><span class="icon">🛠️</span> Detailed Task Allocations & Technical Specs</div>
+
+            <!-- PR 1 -->
+            <div class="task-card pr1">
+                <div class="task-header"><h3>🗄️ PR 1: Database Setup & Registration Verification</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Anjana</span>
+                    <span class="meta-tag">Complexity: Medium</span>
+                    <span class="meta-tag">Prerequisite: None (Initial Setup)</span>
+                    <span class="meta-tag">Branch: <code>feature/pr1-database-setup</code></span>
+                </div>
+                <div class="task-objectives">Define the relational structure of the database. Execute the core DDL script on the Oracle Cloud Autonomous Database to prepare tables, primary/foreign key relations, and sequences. Build the email availability check backend endpoint and integrate it with the frontend registration page for real-time form validation.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — SQL Schema + Stored Procedures</div>
+                <ul class="task-list">
+                    <li>Execute the DDL script to create all 8 tables: <code>USERS</code>, <code>PASSWORD_RESETS</code>, <code>ACCOUNTS</code>, <code>TRANSACTIONS</code>, <code>BUDGETS</code>, <code>BILLS</code>, <code>INVESTMENTS</code>, <code>USER_SETTINGS</code></li>
+                    <li>Create stored procedures: <code>REGISTER_USER_PROC</code>, <code>LOGIN_USER_PROC</code>, <code>STORE_RESET_TOKEN_PROC</code>, <code>RESET_PASSWORD_PROC</code>, <code>CHECK_EMAIL_EXISTS_PROC</code></li>
+                </ul>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Expose endpoint: <code>GET /auth/check-email</code> → Query parameter <code>email</code> is passed to <code>CHECK_EMAIL_EXISTS_PROC</code> to verify if the email is available.</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>Register.jsx</strong> to the backend. Submit form details to <code>/auth/register</code>.</li>
+                    <li>Integrate <code>/auth/check-email</code> to perform real-time verification as the user types their email address (e.g., show a validation checkmark or error alert).</li>
+                </ul>
+
+                <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">SQL — DDL Script (Execute in Oracle SQL Worksheet)</span></div>
+                    <pre><span class="comment">-- 1. Users Table</span>
+<span class="keyword">CREATE TABLE</span> USERS (
+    USER_ID <span class="type">NUMBER</span> <span class="keyword">GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY</span>,
+    FULL_NAME <span class="type">VARCHAR2(100)</span> <span class="keyword">NOT NULL</span>,
+    EMAIL <span class="type">VARCHAR2(100)</span> <span class="keyword">UNIQUE NOT NULL</span>,
+    PASSWORD_HASH <span class="type">VARCHAR2(255)</span> <span class="keyword">NOT NULL</span>,
+    CREATED_AT <span class="type">TIMESTAMP</span> <span class="keyword">DEFAULT</span> CURRENT_TIMESTAMP
+);
+
+<span class="comment">-- 2. Password Resets</span>
+<span class="keyword">CREATE TABLE</span> PASSWORD_RESETS (
+    EMAIL <span class="type">VARCHAR2(100)</span> <span class="keyword">PRIMARY KEY</span>,
+    OTP <span class="type">VARCHAR2(6)</span> <span class="keyword">NOT NULL</span>,
+    EXPIRY <span class="type">TIMESTAMP</span> <span class="keyword">NOT NULL</span>
+);
+
+<span class="comment">-- 3. Accounts Table (Wallets)</span>
+<span class="keyword">CREATE TABLE</span> ACCOUNTS (
+    ACCOUNT_ID <span class="type">NUMBER</span> <span class="keyword">GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY</span>,
+    USER_ID <span class="type">NUMBER</span> <span class="keyword">NOT NULL</span>,
+    ACCOUNT_NAME <span class="type">VARCHAR2(100)</span> <span class="keyword">NOT NULL</span>,
+    ACCOUNT_TYPE <span class="type">VARCHAR2(50)</span> <span class="keyword">NOT NULL</span>,
+    BALANCE <span class="type">NUMBER(15, 2)</span> <span class="keyword">DEFAULT</span> 0.00,
+    CARD_NUMBER <span class="type">VARCHAR2(20)</span>,
+    EXP_DATE <span class="type">VARCHAR2(5)</span>,
+    COLOR <span class="type">VARCHAR2(50)</span> <span class="keyword">DEFAULT</span> <span class="string">'bg-blue-600'</span>,
+    CREATED_AT <span class="type">TIMESTAMP</span> <span class="keyword">DEFAULT</span> CURRENT_TIMESTAMP,
+    <span class="keyword">CONSTRAINT</span> FK_ACCOUNTS_USER <span class="keyword">FOREIGN KEY</span> (USER_ID)
+        <span class="keyword">REFERENCES</span> USERS(USER_ID) <span class="keyword">ON DELETE CASCADE</span>
+);
+
+<span class="comment">-- 4. Transactions Table (Ledger)</span>
+<span class="keyword">CREATE TABLE</span> TRANSACTIONS (
+    TRANSACTION_ID <span class="type">NUMBER</span> <span class="keyword">GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY</span>,
+    USER_ID <span class="type">NUMBER</span> <span class="keyword">NOT NULL</span>,
+    ACCOUNT_ID <span class="type">NUMBER</span> <span class="keyword">NOT NULL</span>,
+    TRANSACTION_TYPE <span class="type">VARCHAR2(10)</span> <span class="keyword">NOT NULL</span>,
+    AMOUNT <span class="type">NUMBER(15, 2)</span> <span class="keyword">NOT NULL</span>,
+    CATEGORY <span class="type">VARCHAR2(50)</span> <span class="keyword">NOT NULL</span>,
+    MERCHANT <span class="type">VARCHAR2(100)</span> <span class="keyword">NOT NULL</span>,
+    TRANSACTION_DATE <span class="type">DATE</span> <span class="keyword">DEFAULT</span> SYSDATE,
+    DESCRIPTION <span class="type">VARCHAR2(255)</span>,
+    <span class="keyword">CONSTRAINT</span> FK_TRANSACTIONS_USER <span class="keyword">FOREIGN KEY</span> (USER_ID)
+        <span class="keyword">REFERENCES</span> USERS(USER_ID) <span class="keyword">ON DELETE CASCADE</span>,
+    <span class="keyword">CONSTRAINT</span> FK_TRANSACTIONS_ACCOUNT <span class="keyword">FOREIGN KEY</span> (ACCOUNT_ID)
+        <span class="keyword">REFERENCES</span> ACCOUNTS(ACCOUNT_ID) <span class="keyword">ON DELETE CASCADE</span>
+);
+
+<span class="comment">-- 5. Budgets Table</span>
+<span class="keyword">CREATE TABLE</span> BUDGETS (
+    BUDGET_ID <span class="type">NUMBER</span> <span class="keyword">GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY</span>,
+    USER_ID <span class="type">NUMBER</span> <span class="keyword">NOT NULL</span>,
+    CATEGORY_NAME <span class="type">VARCHAR2(50)</span> <span class="keyword">NOT NULL</span>,
+    BUDGET_LIMIT <span class="type">NUMBER(15, 2)</span> <span class="keyword">NOT NULL</span>,
+    SPENT_AMOUNT <span class="type">NUMBER(15, 2)</span> <span class="keyword">DEFAULT</span> 0.00,
+    BUDGET_MONTH <span class="type">VARCHAR2(7)</span> <span class="keyword">NOT NULL</span>,
+    <span class="keyword">CONSTRAINT</span> UC_USER_CATEGORY_MONTH <span class="keyword">UNIQUE</span> (USER_ID, CATEGORY_NAME, BUDGET_MONTH),
+    <span class="keyword">CONSTRAINT</span> FK_BUDGETS_USER <span class="keyword">FOREIGN KEY</span> (USER_ID)
+        <span class="keyword">REFERENCES</span> USERS(USER_ID) <span class="keyword">ON DELETE CASCADE</span>
+);
+
+<span class="comment">-- 6. Bills Table (Recurring Payments)</span>
+<span class="keyword">CREATE TABLE</span> BILLS (
+    BILL_ID <span class="type">NUMBER</span> <span class="keyword">GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY</span>,
+    USER_ID <span class="type">NUMBER</span> <span class="keyword">NOT NULL</span>,
+    BILL_NAME <span class="type">VARCHAR2(100)</span> <span class="keyword">NOT NULL</span>,
+    AMOUNT <span class="type">NUMBER(15, 2)</span> <span class="keyword">NOT NULL</span>,
+    DUE_DATE <span class="type">DATE</span> <span class="keyword">NOT NULL</span>,
+    CATEGORY <span class="type">VARCHAR2(50)</span> <span class="keyword">NOT NULL</span>,
+    IS_PAID <span class="type">NUMBER(1)</span> <span class="keyword">DEFAULT</span> 0,
+    FREQUENCY <span class="type">VARCHAR2(20)</span> <span class="keyword">DEFAULT</span> <span class="string">'MONTHLY'</span>,
+    <span class="keyword">CONSTRAINT</span> FK_BILLS_USER <span class="keyword">FOREIGN KEY</span> (USER_ID)
+        <span class="keyword">REFERENCES</span> USERS(USER_ID) <span class="keyword">ON DELETE CASCADE</span>
+);
+
+<span class="comment">-- 7. Investments Table</span>
+<span class="keyword">CREATE TABLE</span> INVESTMENTS (
+    INVESTMENT_ID <span class="type">NUMBER</span> <span class="keyword">GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY</span>,
+    USER_ID <span class="type">NUMBER</span> <span class="keyword">NOT NULL</span>,
+    ASSET_NAME <span class="type">VARCHAR2(100)</span> <span class="keyword">NOT NULL</span>,
+    ASSET_TYPE <span class="type">VARCHAR2(50)</span> <span class="keyword">NOT NULL</span>,
+    QUANTITY <span class="type">NUMBER(15, 4)</span> <span class="keyword">NOT NULL</span>,
+    BUY_PRICE <span class="type">NUMBER(15, 2)</span> <span class="keyword">NOT NULL</span>,
+    CURRENT_PRICE <span class="type">NUMBER(15, 2)</span> <span class="keyword">NOT NULL</span>,
+    INVESTED_DATE <span class="type">DATE</span> <span class="keyword">DEFAULT</span> SYSDATE,
+    <span class="keyword">CONSTRAINT</span> FK_INVESTMENTS_USER <span class="keyword">FOREIGN KEY</span> (USER_ID)
+        <span class="keyword">REFERENCES</span> USERS(USER_ID) <span class="keyword">ON DELETE CASCADE</span>
+);
+
+<span class="comment">-- 8. User Settings Table</span>
+<span class="keyword">CREATE TABLE</span> USER_SETTINGS (
+    USER_ID <span class="type">NUMBER</span> <span class="keyword">PRIMARY KEY</span>,
+    BASE_CURRENCY <span class="type">VARCHAR2(10)</span> <span class="keyword">DEFAULT</span> <span class="string">'USD'</span>,
+    THEME <span class="type">VARCHAR2(10)</span> <span class="keyword">DEFAULT</span> <span class="string">'light'</span>,
+    NOTIFICATIONS_ENABLED <span class="type">NUMBER(1)</span> <span class="keyword">DEFAULT</span> 1,
+    <span class="keyword">CONSTRAINT</span> FK_SETTINGS_USER <span class="keyword">FOREIGN KEY</span> (USER_ID)
+        <span class="keyword">REFERENCES</span> USERS(USER_ID) <span class="keyword">ON DELETE CASCADE</span>
+);</pre>
+                </div>
+            </div>
+
+            <!-- PR 2 -->
+            <div class="task-card pr2">
+                <div class="task-header"><h3>🔑 PR 2: Auth Session & Route Protection Guards</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Dinesh</span>
+                    <span class="meta-tag">Complexity: Medium</span>
+                    <span class="meta-tag">Prerequisite: PR 1 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr2-auth-routing</code></span>
+                </div>
+                <div class="task-objectives">Configure the FastAPI security middleware to handle token validations and integrate session states, login, forgot-password, and reset-OTP interfaces in the React frontend. Secure the user pages using Protected Route guards.</div>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Implement token verification middleware and dependencies (extracting the <code>user_id</code> from JWT access tokens) to secure incoming requests for subsequent features.</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect the login form in <strong>login.jsx</strong>, and <strong>ForgotPassword.jsx</strong> / <strong>VerifyOTP.jsx</strong> to their corresponding backend routes.</li>
+                    <li>Update <strong>api.js</strong> to append the JWT <code>Authorization</code> header to every request if a token is present in <code>localStorage</code>.</li>
+                    <li>Create a wrapper component (<strong>ProtectedRoute.jsx</strong>) in <code>frontend/src/components</code> that checks for <code>localStorage.getItem('token')</code> and redirects unauthorized visits to <code>/login</code>.</li>
+                    <li>Ensure the sidebar displays user credentials dynamically, and logs them out cleanly by clearing local storage session tokens on logout.</li>
+                </ul>
+            </div>
+
+            <!-- PR 3 -->
+            <div class="task-card pr3">
+                <div class="task-header"><h3>💳 PR 3: Wallet & Accounts (My Wallet) CRUD</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Bhashitha</span>
+                    <span class="meta-tag">Complexity: High</span>
+                    <span class="meta-tag">Prerequisite: PR 2 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr3-wallet-accounts</code></span>
+                </div>
+                <div class="task-objectives">Deliver full CRUD capability for managing account wallets (Checking accounts, Credit cards, Investment accounts) and linking them to the user.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Stored Procedures</div>
+                <ul class="task-list">
+                    <li><code>CREATE_ACCOUNT_PROC(p_user_id, p_name, p_type, p_balance, p_card, p_exp, p_color, p_status)</code></li>
+                    <li><code>GET_ACCOUNTS_PROC(p_user_id, p_cursor OUT SYS_REFCURSOR)</code> — Returns active wallets for the user.</li>
+                    <li><code>DELETE_ACCOUNT_PROC(p_account_id, p_status OUT VARCHAR2)</code></li>
+                </ul>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/accounts.py</code> and <code>backend/app/services/accounts_service.py</code>. Include router in <code>main.py</code>.</li>
+                    <li><code>POST /accounts</code> → Add new card/account.</li>
+                    <li><code>GET /accounts</code> → Fetch user wallets.</li>
+                    <li><code>DELETE /accounts/{id}</code> → Unlink account.</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>MyWallet.jsx</strong> to the accounts endpoints.</li>
+                    <li>Hook up the "Add New Card" modal form to the API.</li>
+                    <li>Dynamically render linked accounts and transition visual card graphics on click.</li>
+                </ul>
+            </div>
+
+            <!-- PR 4 -->
+            <div class="task-card pr4">
+                <div class="task-header"><h3>💸 PR 4: Transaction Ledger & Database Balances Trigger</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Dishan</span>
+                    <span class="meta-tag">Complexity: High</span>
+                    <span class="meta-tag">Prerequisite: PR 3 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr4-transactions-ledger</code></span>
+                </div>
+                <div class="task-objectives">Build the transaction logging ledger. Create a database trigger to automate balance recalculations on accounts when transactions are recorded or deleted.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Trigger + Stored Procedures</div>
+                <ul class="task-list">
+                    <li><strong>Create Trigger:</strong> <code>TRG_UPDATE_ACCOUNT_BALANCE</code> — AFTER INSERT OR DELETE on TRANSACTIONS. Auto-adjusts ACCOUNTS.BALANCE. (See SQL code below)</li>
+                    <li><code>ADD_TRANSACTION_PROC(p_user_id, p_account_id, p_type, p_amount, p_category, p_merchant, p_desc, p_status)</code></li>
+                    <li><code>GET_TRANSACTIONS_PROC(p_user_id, p_cursor OUT SYS_REFCURSOR)</code></li>
+                    <li><code>DELETE_TRANSACTION_PROC(p_transaction_id, p_status)</code></li>
+                </ul>
+
+                <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">SQL — Balance Trigger (vital for ADBMS core score)</span></div>
+                    <pre><span class="keyword">CREATE OR REPLACE TRIGGER</span> TRG_UPDATE_ACCOUNT_BALANCE
+<span class="keyword">AFTER INSERT OR DELETE ON</span> TRANSACTIONS
+<span class="keyword">FOR EACH ROW</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">IF</span> INSERTING <span class="keyword">THEN</span>
+        <span class="keyword">IF</span> :NEW.TRANSACTION_TYPE = <span class="string">'INCOME'</span> <span class="keyword">THEN</span>
+            <span class="keyword">UPDATE</span> ACCOUNTS
+            <span class="keyword">SET</span> BALANCE = BALANCE + :NEW.AMOUNT
+            <span class="keyword">WHERE</span> ACCOUNT_ID = :NEW.ACCOUNT_ID;
+        <span class="keyword">ELSIF</span> :NEW.TRANSACTION_TYPE = <span class="string">'EXPENSE'</span> <span class="keyword">THEN</span>
+            <span class="keyword">UPDATE</span> ACCOUNTS
+            <span class="keyword">SET</span> BALANCE = BALANCE - :NEW.AMOUNT
+            <span class="keyword">WHERE</span> ACCOUNT_ID = :NEW.ACCOUNT_ID;
+        <span class="keyword">END IF</span>;
+    <span class="keyword">ELSIF</span> DELETING <span class="keyword">THEN</span>
+        <span class="keyword">IF</span> :OLD.TRANSACTION_TYPE = <span class="string">'INCOME'</span> <span class="keyword">THEN</span>
+            <span class="keyword">UPDATE</span> ACCOUNTS
+            <span class="keyword">SET</span> BALANCE = BALANCE - :OLD.AMOUNT
+            <span class="keyword">WHERE</span> ACCOUNT_ID = :OLD.ACCOUNT_ID;
+        <span class="keyword">ELSIF</span> :OLD.TRANSACTION_TYPE = <span class="string">'EXPENSE'</span> <span class="keyword">THEN</span>
+            <span class="keyword">UPDATE</span> ACCOUNTS
+            <span class="keyword">SET</span> BALANCE = BALANCE + :OLD.AMOUNT
+            <span class="keyword">WHERE</span> ACCOUNT_ID = :OLD.ACCOUNT_ID;
+        <span class="keyword">END IF</span>;
+    <span class="keyword">END IF</span>;
+<span class="keyword">END</span>;
+/</pre>
+                </div>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/transactions.py</code> and <code>backend/app/services/transactions_service.py</code>. Include router in <code>main.py</code>.</li>
+                    <li><code>POST /transactions</code> → Add income/expense.</li>
+                    <li><code>GET /transactions</code> → Get transaction list.</li>
+                    <li><code>DELETE /transactions/{id}</code> → Revert transaction.</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Add a global transaction insertion form modal trigger in the layout/sidebar.</li>
+                    <li>Hook up the "Recent Transactions" table in <strong>Dashboard.jsx</strong> to display actual transaction history instead of placeholders.</li>
+                </ul>
+            </div>
+
+            <!-- PR 5 -->
+            <div class="task-card pr5">
+                <div class="task-header"><h3>📊 PR 5: Expense Categories & Budgets Tracker</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Omashi</span>
+                    <span class="meta-tag">Complexity: High</span>
+                    <span class="meta-tag">Prerequisite: PR 4 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr5-category-budgets</code></span>
+                </div>
+                <div class="task-objectives">Build the monthly budget management and tracking engine. Automatically aggregate transaction values relative to user limits.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Trigger + Stored Procedures</div>
+                <ul class="task-list">
+                    <li><strong>Create Trigger:</strong> <code>TRG_UPDATE_BUDGET_SPENT</code> — Auto-updates BUDGETS.SPENT_AMOUNT when EXPENSE transactions are added/removed. (See SQL below)</li>
+                    <li><code>SET_BUDGET_PROC(p_user_id, p_category, p_limit, p_month, p_status)</code></li>
+                    <li><code>GET_BUDGETS_PROC(p_user_id, p_month, p_cursor OUT SYS_REFCURSOR)</code></li>
+                </ul>
+
+                <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">SQL — Budget Spent Trigger</span></div>
+                    <pre><span class="keyword">CREATE OR REPLACE TRIGGER</span> TRG_UPDATE_BUDGET_SPENT
+<span class="keyword">AFTER INSERT OR DELETE ON</span> TRANSACTIONS
+<span class="keyword">FOR EACH ROW</span>
+<span class="keyword">DECLARE</span>
+    v_month <span class="type">VARCHAR2(7)</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">IF</span> INSERTING <span class="keyword">AND</span> :NEW.TRANSACTION_TYPE = <span class="string">'EXPENSE'</span> <span class="keyword">THEN</span>
+        v_month := <span class="function">TO_CHAR</span>(:NEW.TRANSACTION_DATE, <span class="string">'YYYY-MM'</span>);
+        <span class="keyword">UPDATE</span> BUDGETS
+        <span class="keyword">SET</span> SPENT_AMOUNT = SPENT_AMOUNT + :NEW.AMOUNT
+        <span class="keyword">WHERE</span> USER_ID = :NEW.USER_ID
+          <span class="keyword">AND</span> CATEGORY_NAME = :NEW.CATEGORY
+          <span class="keyword">AND</span> BUDGET_MONTH = v_month;
+    <span class="keyword">ELSIF</span> DELETING <span class="keyword">AND</span> :OLD.TRANSACTION_TYPE = <span class="string">'EXPENSE'</span> <span class="keyword">THEN</span>
+        v_month := <span class="function">TO_CHAR</span>(:OLD.TRANSACTION_DATE, <span class="string">'YYYY-MM'</span>);
+        <span class="keyword">UPDATE</span> BUDGETS
+        <span class="keyword">SET</span> SPENT_AMOUNT = SPENT_AMOUNT - :OLD.AMOUNT
+        <span class="keyword">WHERE</span> USER_ID = :OLD.USER_ID
+          <span class="keyword">AND</span> CATEGORY_NAME = :OLD.CATEGORY
+          <span class="keyword">AND</span> BUDGET_MONTH = v_month;
+    <span class="keyword">END IF</span>;
+<span class="keyword">END</span>;
+/</pre>
+                </div>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/budgets.py</code> and service files. Include router in <code>main.py</code>.</li>
+                    <li><code>POST /budgets</code> → Define or update budget category limit.</li>
+                    <li><code>GET /budgets/{month}</code> → Get budgets for specific month.</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>Expenses.jsx</strong> to budget endpoints.</li>
+                    <li>Implement progress bars, active alerts when a budget is exceeded, and the "Add Category" modal.</li>
+                </ul>
+            </div>
+
+            <!-- PR 6 -->
+            <div class="task-card pr6">
+                <div class="task-header"><h3>📅 PR 6: Recurring Bills Tracker & Reminders</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Rasanjalee</span>
+                    <span class="meta-tag">Complexity: Medium</span>
+                    <span class="meta-tag">Prerequisite: PR 5 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr6-recurring-bills</code></span>
+                </div>
+                <div class="task-objectives">Implement subscription and repeating invoice trackers. Allow users to register scheduled expenses and mark them as resolved.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Stored Procedures</div>
+                <ul class="task-list">
+                    <li><code>CREATE_BILL_PROC(p_user_id, p_name, p_amount, p_due_date, p_category, p_freq, p_status)</code></li>
+                    <li><code>GET_BILLS_PROC(p_user_id, p_cursor OUT SYS_REFCURSOR)</code></li>
+                    <li><code>MARK_BILL_PAID_PROC(p_bill_id, p_status)</code></li>
+                </ul>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/bills.py</code> and service files. Include router in <code>main.py</code>.</li>
+                    <li><code>POST /bills</code> → Create recurring bill.</li>
+                    <li><code>GET /bills</code> → Get list of bills.</li>
+                    <li><code>PUT /bills/{id}/pay</code> → Toggle paid status (marks bill paid and generates corresponding expense transaction).</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>Bills.jsx</strong> to the backend.</li>
+                    <li>Render interactive card items with paid/unpaid indicators and connect the action button to change status.</li>
+                </ul>
+            </div>
+
+            <!-- PR 7 -->
+            <div class="task-card pr7">
+                <div class="task-header"><h3>📈 PR 7: Investment Portfolio Tracker</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Rasodya</span>
+                    <span class="meta-tag">Complexity: Medium</span>
+                    <span class="meta-tag">Prerequisite: PR 6 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr7-investments</code></span>
+                </div>
+                <div class="task-objectives">Manage user portfolios including Stocks, Cryptocurrencies, and Real Estate investments. Track purchased values versus current value.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Stored Procedures</div>
+                <ul class="task-list">
+                    <li><code>ADD_INVESTMENT_PROC(p_user_id, p_name, p_type, p_qty, p_buy_price, p_curr_price, p_status)</code></li>
+                    <li><code>GET_INVESTMENTS_PROC(p_user_id, p_cursor OUT SYS_REFCURSOR)</code></li>
+                    <li><code>UPDATE_INVESTMENT_PRICE_PROC(p_investment_id, p_new_price, p_status)</code></li>
+                </ul>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/investments.py</code> and service files. Include router in <code>main.py</code>.</li>
+                    <li><code>POST /investments</code> → Add bought asset.</li>
+                    <li><code>GET /investments</code> → Fetch active portfolio.</li>
+                    <li><code>PATCH /investments/{id}</code> → Update current asset pricing details.</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>Investments.jsx</strong>.</li>
+                    <li>Show dynamic values for unrealized gains/losses, asset distribution totals, and link inputs.</li>
+                </ul>
+            </div>
+
+            <!-- PR 8 -->
+            <div class="task-card pr8">
+                <div class="task-header"><h3>📊 PR 8: Analytics Engine & Charts</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Divya</span>
+                    <span class="meta-tag">Complexity: Medium</span>
+                    <span class="meta-tag">Prerequisite: PR 7 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr8-analytics</code></span>
+                </div>
+                <div class="task-objectives">Perform database aggregates (grouped query runs) and present them graphically in charts to display historical budget data and categories.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Stored Procedures</div>
+                <ul class="task-list">
+                    <li><code>GET_CATEGORY_BREAKDOWN_PROC(p_user_id, p_cursor OUT SYS_REFCURSOR)</code> — Computes total spent grouped by category for the current month.</li>
+                    <li><code>GET_INCOME_VS_EXPENSE_PROC(p_user_id, p_cursor OUT SYS_REFCURSOR)</code> — Computes monthly income vs expense for the past 6 months.</li>
+                </ul>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/analytics.py</code> and service files. Include router in <code>main.py</code>.</li>
+                    <li><code>GET /analytics/category-breakdown</code></li>
+                    <li><code>GET /analytics/monthly-trends</code></li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>Analytics.jsx</strong> using Recharts.</li>
+                    <li>Populate pie charts and line charts with structured JSON data from aggregate queries.</li>
+                </ul>
+            </div>
+
+            <!-- PR 9 -->
+            <div class="task-card pr9">
+                <div class="task-header"><h3>🏠 PR 9: Unified Dashboard Overview API & Integration</h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Vijan</span>
+                    <span class="meta-tag">Complexity: Medium</span>
+                    <span class="meta-tag">Prerequisite: PR 8 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr9-dashboard-summary</code></span>
+                </div>
+                <div class="task-objectives">Deliver a single high-performance aggregation endpoint that compiles data from all tables to present the homepage dashboard metrics cleanly.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Stored Procedure</div>
+                <ul class="task-list">
+                    <li><code>GET_DASHBOARD_SUMMARY_PROC(p_user_id, p_total_net_worth OUT NUMBER, p_monthly_spend OUT NUMBER, p_savings_rate OUT NUMBER, p_recent_transactions OUT SYS_REFCURSOR)</code></li>
+                    <li>Summarizes checking, credit, and investment balances.</li>
+                    <li>Calculates sum of expense transactions in the current month.</li>
+                    <li>Selects the top 5 most recent transactions.</li>
+                </ul>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/dashboard.py</code> and service files. Include router in <code>main.py</code>.</li>
+                    <li><code>GET /dashboard/summary</code></li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>Dashboard.jsx</strong> overview panels.</li>
+                    <li>Ensure the Net Worth header, Monthly Spend card, and Savings Rate render live calculations.</li>
+                </ul>
+            </div>
+
+            <!-- PR 10 -->
+            <div class="task-card pr10">
+                <div class="task-header"><h3>⚙️ PR 10: Profile Customization & Clear Data <span style="color: #34d399; font-size: 14px;">(Easy Task)</span></h3></div>
+                <div class="task-meta">
+                    <span class="meta-tag assignee">👤 Kavinda</span>
+                    <span class="meta-tag" style="background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.3);">Complexity: Easy</span>
+                    <span class="meta-tag">Prerequisite: PR 9 Merged</span>
+                    <span class="meta-tag">Branch: <code>feature/pr10-settings-profile</code></span>
+                </div>
+                <div class="task-objectives">Implement the User Preferences pane. Create a data-wipe button to allow account resets during testing, which deletes cascading records. This is the easiest task because by this point the entire schema and backend routing architecture are fully completed and tested by the team.</div>
+
+                <div class="task-section-label db">🗄️ Database Work — Stored Procedures</div>
+                <ul class="task-list">
+                    <li><code>UPDATE_SETTINGS_PROC(p_user_id, p_currency, p_theme, p_notifications, p_status)</code></li>
+                    <li><code>RESET_USER_DATA_PROC(p_user_id, p_status)</code> — Executes CASCADE deletes on Accounts, Transactions, Budgets, Bills, Investments for the user.</li>
+                </ul>
+
+                <div class="task-section-label api">🐍 Backend Work — FastAPI</div>
+                <ul class="task-list">
+                    <li>Create <code>backend/app/routes/settings.py</code> and service files. Include router in <code>main.py</code>.</li>
+                    <li><code>GET /settings</code> → Fetch current system configs.</li>
+                    <li><code>PUT /settings</code> → Modify configs.</li>
+                    <li><code>POST /settings/reset</code> → Clean database slate.</li>
+                </ul>
+
+                <div class="task-section-label ui">⚛️ Frontend Work — React</div>
+                <ul class="task-list">
+                    <li>Connect <strong>Settings.jsx</strong>.</li>
+                    <li>Ensure updates save preference cookies/tokens, and hook up the "Reset Account" warning modal.</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- REFERENCE TEMPLATE -->
+        <div class="reference-card">
+            <h3>💡 Python Cursor Handling Template (For All Teammates)</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Since the backend uses the <code>oracledb</code> library, use this pattern to call stored procedures that return cursors:</p>
+            <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">Python — FastAPI Service Template</span></div>
+                <pre><span class="keyword">from</span> app.config.db <span class="keyword">import</span> get_db_connection
+
+<span class="keyword">def</span> <span class="function">get_user_accounts</span>(user_id: <span class="type">int</span>):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    <span class="keyword">try</span>:
+        <span class="comment"># 1. Define out parameters: SYS_REFCURSOR becomes a cursor</span>
+        cursor_out = conn.cursor()
+
+        <span class="comment"># 2. Call the stored procedure</span>
+        cursor.callproc(<span class="string">"GET_ACCOUNTS_PROC"</span>, [user_id, cursor_out])
+
+        <span class="comment"># 3. Fetch rows from cursor</span>
+        accounts = []
+        <span class="keyword">for</span> row <span class="keyword">in</span> cursor_out:
+            accounts.append({
+                <span class="string">"account_id"</span>: row[0],
+                <span class="string">"account_name"</span>: row[1],
+                <span class="string">"account_type"</span>: row[2],
+                <span class="string">"balance"</span>: <span class="function">float</span>(row[3]),
+                <span class="string">"card_number"</span>: row[4],
+                <span class="string">"exp_date"</span>: row[5],
+                <span class="string">"color"</span>: row[6]
+            })
+        <span class="keyword">return</span> accounts
+    <span class="keyword">finally</span>:
+        cursor_out.close()
+        cursor.close()
+        conn.close()</pre>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>📊 BudgetMate Team Task Allocations — Generated June 5, 2026</p>
+            <p style="margin-top: 4px;">React + FastAPI + Oracle Cloud Autonomous Database</p>
+        </div>
+
+    </div>
+</body>
+</html>
