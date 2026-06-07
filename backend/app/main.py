@@ -19,7 +19,7 @@ app.include_router(auth.router, prefix="/auth")
 
 @app.on_event("startup")
 async def startup():
-    print("🚀 Server is starting up...")
+    print("[SERVER] Server is starting up...")
     init_db()
 
 @app.get("/")

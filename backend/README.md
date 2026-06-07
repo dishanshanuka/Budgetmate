@@ -1,6 +1,6 @@
 # BudgetMate Backend
 
-This is the Python (FastAPI) backend for the BudgetMate expense tracking system. It provides RESTful APIs, handles authentication with JWT, and connects to an Oracle Cloud Autonomous Database.
+This is the Python (FastAPI) backend for the BudgetMate expense tracking system. It provides RESTful APIs, handles authentication with JWT, and connects to an Azure SQL Database.
 
 ## Setup Instructions for Teammates
 
@@ -17,18 +17,23 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-### 2. Configure the Oracle Cloud Wallet
-Because the wallet contains sensitive connection certificates, it is ignored by Git. 
-1. Ask the project lead for the `Wallet_ZYHS69EYEV1FQDXG.zip` file (or your specific wallet zip).
-2. Create a folder named `wallet` inside this `backend/` directory.
-3. Extract all the files from the zip into `backend/wallet/`.
+### 2. Install ODBC Driver
+This project uses `pyodbc` to connect to Azure SQL Database. You need the **ODBC Driver 17 for SQL Server** installed on your machine.
+- Download it from: [Microsoft ODBC Driver for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
+- Most Windows machines with SQL Server tools already have this installed.
 
 ### 3. Set up Environment Variables
-Because passwords are also ignored by Git, you need to create your own local `.env` file:
+Because passwords are ignored by Git, you need to create your own local `.env` file:
 1. Copy the `backend/.env.example` file and rename the copy to `.env`.
 2. Open the new `.env` file and fill in your actual database credentials, JWT secret, and email configurations (ask the team lead if unsure).
 
-### 4. Run the Server
+### 4. Set up the Database
+If the Azure SQL Database tables and stored procedures have not been created yet, run the setup script:
+1. Open `database_setup.sql` in **Microsoft SQL Server Management Studio (SSMS)**.
+2. Connect to the Azure SQL Server (`budgetmate-db-server-bhashitha.database.windows.net`).
+3. Execute the script against the `BudgetMate` database.
+
+### 5. Run the Server
 Start the development server using the main module:
 ```bash
 python -m app.main
@@ -39,7 +44,8 @@ Alternatively, you can run it directly with Uvicorn:
 uvicorn app.main:app --reload
 ```
 
-### 5. Verify API Connection
+### 6. Verify API Connection
 Once the server is running, visit:
 [http://localhost:8000/docs](http://localhost:8000/docs)
 This will open the interactive Swagger UI where you can explore and test all available API endpoints!
+

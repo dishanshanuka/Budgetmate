@@ -1,6 +1,6 @@
 # BudgetMate
 
-BudgetMate is a comprehensive expense tracking application. It is composed of a modern React frontend and a FastAPI backend connected to an Oracle Cloud Autonomous Database.
+BudgetMate is a comprehensive expense tracking application. It is composed of a modern React frontend and a FastAPI backend connected to an Azure SQL Database.
 
 ## Project Structure
 

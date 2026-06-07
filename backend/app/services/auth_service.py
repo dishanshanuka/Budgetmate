@@ -16,14 +16,20 @@ def register_user(full_name, email, password):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        p_status = cursor.var(str)
         
-        cursor.callproc("register_user_proc", [full_name, clean_email, hashed_pw, p_status])
-        status = p_status.getvalue()
+        sql = """
+        DECLARE @status VARCHAR(50);
+        EXEC register_user_proc ?, ?, ?, @status OUTPUT;
+        SELECT @status;
+        """
+        cursor.execute(sql, (full_name, clean_email, hashed_pw))
+        row = cursor.fetchone()
+        status = row[0] if row else "ERROR"
+        
         conn.commit()
         return status
     except Exception as e:
-        logger.error(f"❌ Registration Error: {str(e)}")
+        logger.error(f"[ERROR] Registration Error: {str(e)}")
         return "ERROR"
     finally:
         if conn:
@@ -37,18 +43,25 @@ def authenticate_user(email, password):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        p_hash, p_id, p_name, p_status = cursor.var(str), cursor.var(int), cursor.var(str), cursor.var(str)
         
-        cursor.callproc("login_user_proc", [clean_email, p_hash, p_id, p_name, p_status])
+        sql = """
+        DECLARE @password_hash VARCHAR(255), @id INT, @full_name VARCHAR(100), @status VARCHAR(50);
+        EXEC login_user_proc ?, @password_hash OUTPUT, @id OUTPUT, @full_name OUTPUT, @status OUTPUT;
+        SELECT @password_hash, @id, @full_name, @status;
+        """
+        cursor.execute(sql, (clean_email,))
+        row = cursor.fetchone()
         
-        if p_status.getvalue() == "SUCCESS" and verify_password(password, p_hash.getvalue()):
-            token = create_access_token({"sub": clean_email, "user_id": p_id.getvalue()})
-            return {"access_token": token, "token_type": "bearer", "user": p_name.getvalue()}, "SUCCESS"
+        if row:
+            db_hash, db_id, db_name, db_status = row
+            if db_status == "SUCCESS" and db_hash and verify_password(password, db_hash):
+                token = create_access_token({"sub": clean_email, "user_id": db_id})
+                return {"access_token": token, "token_type": "bearer", "user": db_name}, "SUCCESS"
         
         return None, "FAILED"
     except Exception as e:
-        logger.error(f"❌ Login Error: {str(e)}")
-        return None, "ERROR"
+        logger.error(f"[ERROR] Login Error: {str(e)}")
+        return "ERROR"
     finally:
         if conn:
             cursor.close()
@@ -62,29 +75,36 @@ def forgot_password_logic(email: str) -> str:
     otp = str(secrets.randbelow(900000) + 100000)
     expiry = datetime.now() + timedelta(minutes=10)
     
-    print(f"🔍 DEBUG: Generated OTP: {otp} for '{clean_email}'")
+    print(f"[DEBUG] Generated OTP: {otp} for '{clean_email}'")
     
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        p_status = cursor.var(str)
-        p_error_msg = cursor.var(str)
         
-        cursor.callproc("STORE_RESET_TOKEN_PROC", [clean_email, otp, expiry, p_status, p_error_msg])
+        sql = """
+        DECLARE @status VARCHAR(50), @error_msg VARCHAR(255);
+        EXEC STORE_RESET_TOKEN_PROC ?, ?, ?, @status OUTPUT, @error_msg OUTPUT;
+        SELECT @status, @error_msg;
+        """
+        cursor.execute(sql, (clean_email, otp, expiry))
+        row = cursor.fetchone()
         
-        status = p_status.getvalue()
+        status = "FAILED"
+        if row:
+            status, error_msg = row
+            
         if status == "SUCCESS":
             if send_reset_email(clean_email, otp):
                 conn.commit()
-                print(f"✅ DEBUG: OTP sent to {clean_email}")
+                print(f"[DEBUG] OTP sent to {clean_email}")
                 return "SUCCESS"
             else:
                 return "EMAIL_FAILED"
         
         return "FAILED"
     except Exception as e:
-        print(f"🔥 DEBUG: Error in Forgot Password: {str(e)}")
+        print(f"[DEBUG] Error in Forgot Password: {str(e)}")
         return "INTERNAL_ERROR"
     finally:
         if conn:
@@ -101,19 +121,22 @@ def reset_password_logic(email, otp, new_password):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        p_status = cursor.var(str)
         
-        # [Email, OTP, HashedPassword, Status]
-        cursor.callproc("reset_password_proc", [clean_email, otp, hashed_pw, p_status])
+        sql = """
+        DECLARE @status VARCHAR(50);
+        EXEC reset_password_proc ?, ?, ?, @status OUTPUT;
+        SELECT @status;
+        """
+        cursor.execute(sql, (clean_email, otp, hashed_pw))
+        row = cursor.fetchone()
+        status = row[0] if row else "ERROR"
         
-        status = p_status.getvalue()
-        
-        print(f"🔍 DEBUG: Reset Status from DB: {status}")
+        print(f"[DEBUG] Reset Status from DB: {status}")
         
         conn.commit()
         return status
     except Exception as e:
-        print(f"🔥 DEBUG: Critical Reset Error - {str(e)}")
+        print(f"[DEBUG] Critical Reset Error - {str(e)}")
         return "ERROR"
     finally:
         if conn:
