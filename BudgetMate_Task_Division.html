@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BudgetMate — Task Division & Implementation Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #050A18;
+      color: #C8D6E5;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0A1128; }
+    ::-webkit-scrollbar-thumb { background: #1E3A5F; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+    /* ===== ANIMATED BG ===== */
+    .bg-glow {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .bg-glow .orb {
+      position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.08;
+      animation: float 20s ease-in-out infinite;
+    }
+    .bg-glow .orb:nth-child(1) { width: 600px; height: 600px; background: #2563eb; top: -10%; left: -5%; animation-delay: 0s; }
+    .bg-glow .orb:nth-child(2) { width: 500px; height: 500px; background: #8b5cf6; bottom: -10%; right: -5%; animation-delay: -7s; }
+    .bg-glow .orb:nth-child(3) { width: 400px; height: 400px; background: #06b6d4; top: 50%; left: 40%; animation-delay: -14s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -40px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    /* ===== CONTAINER ===== */
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 1060px; margin: 0 auto; padding: 40px 24px 80px;
+    }
+
+    /* ===== HEADER ===== */
+    .hero {
+      text-align: center; padding: 60px 0 50px;
+      animation: fadeUp 0.8s ease-out;
+    }
+    .hero .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25);
+      padding: 6px 16px; border-radius: 99px; font-size: 10px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+      color: #60a5fa; margin-bottom: 24px;
+    }
+    .hero .badge .dot { width: 6px; height: 6px; background: #2563eb; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, #60a5fa 50%, #a78bfa 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 16px;
+    }
+    .hero p { max-width: 640px; margin: 0 auto; font-size: 15px; color: #7B8BA8; font-weight: 500; }
+
+    /* ===== NAV / TOC ===== */
+    .toc {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+      margin: 0 auto 56px; max-width: 760px;
+      animation: fadeUp 0.8s ease-out 0.15s both;
+    }
+    .toc a {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+      color: #64748b; text-decoration: none; padding: 8px 18px;
+      border: 1px solid rgba(100,116,139,0.15); border-radius: 12px;
+      transition: all 0.25s; background: rgba(255,255,255,0.02);
+    }
+    .toc a:hover { color: #60a5fa; border-color: rgba(37,99,235,0.4); background: rgba(37,99,235,0.06); transform: translateY(-1px); }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      margin-bottom: 56px;
+      animation: fadeUp 0.6s ease-out both;
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+      padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .section-header .icon {
+      width: 38px; height: 38px; border-radius: 12px; display: flex;
+      align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 22px; font-weight: 800; color: #E8EDF3; letter-spacing: -0.5px;
+    }
+    .section-header .tag {
+      font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+      padding: 4px 10px; border-radius: 6px; margin-left: auto; white-space: nowrap;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px; padding: 32px;
+      transition: all 0.3s;
+    }
+    .card:hover { border-color: rgba(37,99,235,0.2); background: rgba(255,255,255,0.04); }
+
+    /* ===== TECH STACK PILLS ===== */
+    .tech-row {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px;
+    }
+    .tech-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      padding: 6px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
+      color: #94A3B8;
+    }
+    .tech-pill .tech-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ===== PR ROADMAP ===== */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .pr-node {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px; padding: 18px 20px;
+      position: relative; transition: all 0.3s; cursor: default;
+    }
+    .pr-node:hover { border-color: rgba(37,99,235,0.3); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37,99,235,0.08); }
+    .pr-node .pr-num {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 6px; display: block;
+    }
+    .pr-node .pr-title { font-size: 13px; font-weight: 700; color: #E2E8F0; line-height: 1.4; }
+    .pr-node .pr-member { font-size: 11px; color: #64748b; font-weight: 600; margin-top: 6px; }
+    .pr-node .pr-dep {
+      margin-top: 10px; font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: #475569;
+    }
+
+    /* complexity colors */
+    .complexity-complex .pr-num { color: #f97316; }
+    .complexity-complex { border-left: 3px solid rgba(249,115,22,0.4); }
+    .complexity-medium .pr-num { color: #3b82f6; }
+    .complexity-medium { border-left: 3px solid rgba(59,130,246,0.4); }
+    .complexity-less .pr-num { color: #22c55e; }
+    .complexity-less { border-left: 3px solid rgba(34,197,94,0.4); }
+
+    /* ===== DEPENDENCY FLOW ===== */
+    .flow-container {
+      margin: 28px 0 16px;
+      padding: 28px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      overflow-x: auto;
+    }
+    .flow-row {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .flow-pill {
+      font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 8px;
+      white-space: nowrap;
+    }
+    .flow-arrow { color: #334155; font-size: 16px; font-weight: 900; }
+
+    /* ===== TASK CARDS ===== */
+    .task-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px; padding: 0; margin-bottom: 20px;
+      overflow: hidden; transition: all 0.3s;
+    }
+    .task-card:hover { border-color: rgba(37,99,235,0.2); }
+    .task-header {
+      padding: 24px 32px; display: flex; align-items: center; gap: 16px;
+      flex-wrap: wrap; cursor: pointer; user-select: none;
+      transition: background 0.2s;
+    }
+    .task-header:hover { background: rgba(255,255,255,0.02); }
+    .task-num {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 900; color: #fff; flex-shrink: 0;
+    }
+    .task-meta { flex: 1; min-width: 200px; }
+    .task-meta h3 { font-size: 16px; font-weight: 800; color: #E2E8F0; letter-spacing: -0.3px; }
+    .task-meta .assignee { font-size: 12px; font-weight: 600; color: #64748b; margin-top: 2px; }
+    .task-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .task-badge {
+      font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px;
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .badge-complex { background: rgba(249,115,22,0.12); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+    .badge-medium { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+    .badge-less { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+
+    .task-toggle {
+      font-size: 20px; color: #475569; transition: transform 0.3s;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; border: none; background: rgba(255,255,255,0.04); cursor: pointer;
+    }
+    .task-card.open .task-toggle { transform: rotate(180deg); }
+
+    .task-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .task-card.open .task-body { max-height: 2000px; }
+    .task-body-inner { padding: 0 32px 28px; }
+
+    .layer {
+      margin-top: 16px; padding: 16px 20px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .layer-db { background: rgba(139,92,246,0.05); border-color: rgba(139,92,246,0.12); }
+    .layer-be { background: rgba(6,182,212,0.05); border-color: rgba(6,182,212,0.12); }
+    .layer-fe { background: rgba(34,197,94,0.05); border-color: rgba(34,197,94,0.12); }
+    .layer-title {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 2px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .layer-db .layer-title { color: #a78bfa; }
+    .layer-be .layer-title { color: #22d3ee; }
+    .layer-fe .layer-title { color: #4ade80; }
+    .layer ul { list-style: none; padding: 0; }
+    .layer li {
+      position: relative; padding-left: 18px; margin-bottom: 8px;
+      font-size: 13px; color: #94a3b8; font-weight: 500; line-height: 1.6;
+    }
+    .layer li::before {
+      content: ''; position: absolute; left: 0; top: 9px;
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .layer-db li::before { background: #8b5cf6; }
+    .layer-be li::before { background: #06b6d4; }
+    .layer-fe li::before { background: #22c55e; }
+    .layer code {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+      background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 5px;
+      color: #e2e8f0; font-weight: 500;
+    }
+    .layer .file-ref {
+      color: #60a5fa; font-weight: 600; font-size: 12px;
+    }
+
+    /* ===== SQL SCHEMA ===== */
+    .schema-block {
+      background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; overflow: hidden; margin-top: 16px;
+    }
+    .schema-block-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 20px; background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .schema-block-header span {
+      font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .schema-block-header .lang {
+      font-size: 9px; font-weight: 800; color: #64748b; background: rgba(255,255,255,0.04);
+      padding: 3px 8px; border-radius: 5px; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .schema-block pre {
+      padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; line-height: 1.75; color: #CBD5E1; tab-size: 4;
+    }
+    .sql-kw { color: #60a5fa; font-weight: 600; }
+    .sql-type { color: #a78bfa; }
+    .sql-comment { color: #475569; font-style: italic; }
+    .sql-str { color: #4ade80; }
+    .sql-num { color: #fbbf24; }
+    .sql-fn { color: #f472b6; }
+
+    /* ===== TIPS ===== */
+    .tip-card {
+      display: flex; gap: 16px; padding: 20px 24px;
+      background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; margin-bottom: 12px; transition: all 0.25s;
+    }
+    .tip-card:hover { border-color: rgba(37,99,235,0.2); }
+    .tip-num {
+      width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900; color: #fff;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+    .tip-content h4 { font-size: 14px; font-weight: 700; color: #E2E8F0; margin-bottom: 4px; }
+    .tip-content p { font-size: 13px; color: #7B8BA8; font-weight: 500; }
+
+    /* ===== MEMBER OVERVIEW TABLE ===== */
+    .member-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      border-radius: 16px; overflow: hidden; margin-top: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .member-table thead th {
+      background: rgba(255,255,255,0.04); padding: 14px 20px;
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.5px; color: #64748b; text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .member-table tbody td {
+      padding: 14px 20px; font-size: 13px; font-weight: 500; color: #94a3b8;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.015);
+    }
+    .member-table tbody tr:last-child td { border-bottom: none; }
+    .member-table tbody tr:hover td { background: rgba(37,99,235,0.04); }
+    .member-table .name { font-weight: 700; color: #E2E8F0; }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center; padding: 40px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px;
+    }
+    .footer p { font-size: 12px; color: #475569; font-weight: 500; }
+    .footer .brand { font-weight: 800; color: #60a5fa; }
+
+    /* ===== UTILITIES ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    @media (max-width: 640px) {
+      .wrapper { padding: 20px 16px 60px; }
+      .hero { padding: 40px 0 30px; }
+      .task-header { padding: 18px 20px; }
+      .task-body-inner { padding: 0 20px 20px; }
+      .roadmap { grid-template-columns: 1fr; }
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      body { background: #fff; color: #1e293b; }
+      .bg-glow { display: none; }
+      .card, .task-card, .tip-card, .pr-node, .schema-block, .layer {
+        border-color: #e2e8f0; background: #f8fafc;
+      }
+      .task-body { max-height: none !important; }
+      .hero h1 { -webkit-text-fill-color: #0f172a; background: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-glow">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <div class="wrapper">
+
+    <!-- ===== HERO ===== -->
+    <header class="hero">
+      <div class="badge"><div class="dot"></div> ADBMS Group Project</div>
+      <h1>BudgetMate<br/>Task Division &amp; Implementation Roadmap</h1>
+      <p>Complete database schema, task distribution, and sequential Git PR roadmap. Every member works on both frontend &amp; backend to make BudgetMate fully functional.</p>
+    </header>
+
+    <!-- ===== TABLE OF CONTENTS ===== -->
+    <nav class="toc">
+      <a href="#overview">Overview</a>
+      <a href="#roadmap">PR Roadmap</a>
+      <a href="#schema">Database Schema</a>
+      <a href="#tasks">Task Details</a>
+      <a href="#tips">Tips</a>
+    </nav>
+
+    <!-- ===== OVERVIEW ===== -->
+    <section class="section" id="overview" style="animation-delay: 0.2s">
+      <div class="section-header">
+        <div class="icon" style="background: rgba(37,99,235,0.12);">📋</div>
+        <h2>Project Overview</h2>
+      </div>
+      <div class="card">
+        <p style="margin-bottom: 16px; color: #94a3b8; font-size: 14px;">
+          <strong style="color: #E2E8F0;">BudgetMate</strong> is a comprehensive expense tracking application composed of a
+          <strong style="color: #4ade80;">React + Vite</strong> frontend and a
+          <strong style="color: #22d3ee;">FastAPI (Python)</strong> backend connected to an
+          <strong style="color: #a78bfa;">Azure SQL Database</strong>.
+        </p>
+        <p style="margin-bottom: 24px; color: #7B8BA8; font-size: 13px;">
+          Since this is an <strong style="color: #E2E8F0;">ADBMS</strong> project, all queries, aggregations, and CRUD operations should be implemented as <strong style="color: #a78bfa;">SQL Server Stored Procedures, Views, or Triggers</strong> in the database, with FastAPI acting as the thin wrapper to expose them to the React frontend.
+        </p>
+        <div style="margin-bottom: 24px;">
+          <p style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #475569; margin-bottom: 12px;">Currently Implemented</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <span style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 8px; background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2);">✓ User Registration</span>
+            <span style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 8px; background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2);">✓ User Login</span>
+            <span style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 8px; background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2);">✓ Forgot Password / OTP</span>
+            <span style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 8px; background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2);">✓ Frontend UI Pages (Static)</span>
+          </div>
+        </div>
+        <div>
+          <p style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #475569; margin-bottom: 12px;">Tech Stack</p>
+          <div class="tech-row">
+            <span class="tech-pill"><span class="tech-dot" style="background: #61DAFB;"></span>React 18</span>
+            <span class="tech-pill"><span class="tech-dot" style="background: #646CFF;"></span>Vite</span>
+            <span class="tech-pill"><span class="tech-dot" style="background: #38BDF8;"></span>Tailwind CSS v4</span>
+            <span class="tech-pill"><span class="tech-dot" style="background: #009688;"></span>FastAPI</span>
+            <span class="tech-pill"><span class="tech-dot" style="background: #CC2927;"></span>Azure SQL (MSSQL)</span>
+            <span class="tech-pill"><span class="tech-dot" style="background: #F7DF1E;"></span>Axios</span>
+            <span class="tech-pill"><span class="tech-dot" style="background: #FF6384;"></span>Recharts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member Table -->
+      <table class="member-table">
+        <thead>
+          <tr><th>#</th><th>Member</th><th>PR</th><th>Task</th><th>Complexity</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td class="name">Bhashitha (Lead)</td><td>PR 1</td><td>Auth Middleware & Router Guard</td><td><span class="task-badge badge-complex">Complex</span></td></tr>
+          <tr><td>2</td><td class="name">Anjana</td><td>PR 2</td><td>Account / Wallet Management</td><td><span class="task-badge badge-complex">Complex</span></td></tr>
+          <tr><td>3</td><td class="name">Dishan</td><td>PR 3</td><td>Transaction Ledger & APIs</td><td><span class="task-badge badge-complex">Complex</span></td></tr>
+          <tr><td>4</td><td class="name">Dinesh</td><td>PR 4</td><td>Dashboard Overview Stats</td><td><span class="task-badge badge-complex">Complex</span></td></tr>
+          <tr><td>5</td><td class="name">Omashi</td><td>PR 5</td><td>Budget Category Limits</td><td><span class="task-badge badge-medium">Medium</span></td></tr>
+          <tr><td>6</td><td class="name">Kavinda</td><td>PR 6</td><td>Budget Alerts & Smart Tips</td><td><span class="task-badge badge-less">Less Complex</span></td></tr>
+          <tr><td>7</td><td class="name">Vijan</td><td>PR 7</td><td>Bills & Subscriptions Tracker</td><td><span class="task-badge badge-medium">Medium</span></td></tr>
+          <tr><td>8</td><td class="name">Rasodya</td><td>PR 8</td><td>Investments Performance Timeline</td><td><span class="task-badge badge-medium">Medium</span></td></tr>
+          <tr><td>9</td><td class="name">Rasanjalee</td><td>PR 9</td><td>Asset Allocation & Active Assets</td><td><span class="task-badge badge-medium">Medium</span></td></tr>
+          <tr><td>10</td><td class="name">Kavindi</td><td>PR 10</td><td>Profile Details & Password Security</td><td><span class="task-badge badge-less">Less Complex</span></td></tr>
+          <tr><td>11</td><td class="name">Divya</td><td>PR 11</td><td>Detailed Analytics & Export</td><td><span class="task-badge badge-complex">Complex</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== PR ROADMAP ===== -->
+    <section class="section" id="roadmap" style="animation-delay: 0.3s">
+      <div class="section-header">
+        <div class="icon" style="background: rgba(139,92,246,0.12);">🗺️</div>
+        <h2>Git PR Order (Dependency Roadmap)</h2>
+      </div>
+      <div class="card">
+        <p style="font-size: 13px; color: #7B8BA8; margin-bottom: 20px;">
+          PRs are merged one after another in the order below. Each member branches off <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">main</code> <strong style="color: #E2E8F0;">after</strong> the preceding PR is merged. Arrows show dependencies.
+        </p>
+
+        <!-- Dependency chains visualized -->
+        <div class="flow-container">
+          <p style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #475569; margin-bottom: 16px;">Chain A — Core Flow</p>
+          <div class="flow-row">
+            <span class="flow-pill" style="background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2);">PR 1 · Bhashitha</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-pill" style="background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2);">PR 2 · Anjana</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-pill" style="background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2);">PR 3 · Dishan</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-pill" style="background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2);">PR 4 · Dinesh</span>
+          </div>
+          <p style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #475569; margin: 20px 0 16px;">Chain B — Budget Flow</p>
+          <div class="flow-row">
+            <span class="flow-pill" style="background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2);">PR 3 · Dishan</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-pill" style="background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2);">PR 5 · Omashi</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-pill" style="background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2);">PR 6 · Kavinda</span>
+          </div>
+          <p style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #475569; margin: 20px 0 16px;">Chain C — Investments Flow</p>
+          <div class="flow-row">
+            <span class="flow-pill" style="background: rgba(139,92,246,0.1); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2);">PR 1 · Bhashitha</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-pill" style="background: rgba(139,92,246,0.1); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2);">PR 8 · Rasodya</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-pill" style="background: rgba(139,92,246,0.1); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2);">PR 9 · Rasanjalee</span>
+          </div>
+          <p style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #475569; margin: 20px 0 16px;">Parallel (After PR 1)</p>
+          <div class="flow-row">
+            <span class="flow-pill" style="background: rgba(244,114,182,0.1); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.2);">PR 7 · Vijan (Bills)</span>
+            <span style="color: #334155; font-size: 12px; font-weight: 700; padding: 0 4px;">|</span>
+            <span class="flow-pill" style="background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2);">PR 10 · Kavindi (Settings)</span>
+          </div>
+          <p style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #475569; margin: 20px 0 16px;">Final (After PR 3 + PR 5)</p>
+          <div class="flow-row">
+            <span class="flow-pill" style="background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2);">PR 11 · Divya</span>
+          </div>
+        </div>
+
+        <!-- PR Grid -->
+        <div class="roadmap">
+          <div class="pr-node complexity-complex">
+            <span class="pr-num">PR 1</span>
+            <div class="pr-title">Auth Middleware & Router Guard</div>
+            <div class="pr-member">👤 Bhashitha</div>
+            <div class="pr-dep">Depends on: None (first)</div>
+          </div>
+          <div class="pr-node complexity-complex">
+            <span class="pr-num">PR 2</span>
+            <div class="pr-title">Account / Wallet Management</div>
+            <div class="pr-member">👤 Anjana</div>
+            <div class="pr-dep">Depends on: PR 1</div>
+          </div>
+          <div class="pr-node complexity-complex">
+            <span class="pr-num">PR 3</span>
+            <div class="pr-title">Transaction Ledger & APIs</div>
+            <div class="pr-member">👤 Dishan</div>
+            <div class="pr-dep">Depends on: PR 2</div>
+          </div>
+          <div class="pr-node complexity-complex">
+            <span class="pr-num">PR 4</span>
+            <div class="pr-title">Dashboard Overview Stats</div>
+            <div class="pr-member">👤 Dinesh</div>
+            <div class="pr-dep">Depends on: PR 3</div>
+          </div>
+          <div class="pr-node complexity-medium">
+            <span class="pr-num">PR 5</span>
+            <div class="pr-title">Budget Category Limits</div>
+            <div class="pr-member">👤 Omashi</div>
+            <div class="pr-dep">Depends on: PR 3</div>
+          </div>
+          <div class="pr-node complexity-less">
+            <span class="pr-num">PR 6</span>
+            <div class="pr-title">Budget Alerts & Smart Tips</div>
+            <div class="pr-member">👤 Kavinda</div>
+            <div class="pr-dep">Depends on: PR 5</div>
+          </div>
+          <div class="pr-node complexity-medium">
+            <span class="pr-num">PR 7</span>
+            <div class="pr-title">Bills & Subscriptions Tracker</div>
+            <div class="pr-member">👤 Vijan</div>
+            <div class="pr-dep">Depends on: PR 1</div>
+          </div>
+          <div class="pr-node complexity-medium">
+            <span class="pr-num">PR 8</span>
+            <div class="pr-title">Investments Performance Timeline</div>
+            <div class="pr-member">👤 Rasodya</div>
+            <div class="pr-dep">Depends on: PR 1</div>
+          </div>
+          <div class="pr-node complexity-medium">
+            <span class="pr-num">PR 9</span>
+            <div class="pr-title">Asset Allocation & Active Assets</div>
+            <div class="pr-member">👤 Rasanjalee</div>
+            <div class="pr-dep">Depends on: PR 8</div>
+          </div>
+          <div class="pr-node complexity-less">
+            <span class="pr-num">PR 10</span>
+            <div class="pr-title">Profile Details & Password Security</div>
+            <div class="pr-member">👤 Kavindi</div>
+            <div class="pr-dep">Depends on: PR 1</div>
+          </div>
+          <div class="pr-node complexity-complex">
+            <span class="pr-num">PR 11</span>
+            <div class="pr-title">Detailed Analytics & Export</div>
+            <div class="pr-member">👤 Divya</div>
+            <div class="pr-dep">Depends on: PR 3 + PR 5</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DATABASE SCHEMA ===== -->
+    <section class="section" id="schema" style="animation-delay: 0.35s">
+      <div class="section-header">
+        <div class="icon" style="background: rgba(139,92,246,0.12);">🗄️</div>
+        <h2>Proposed Database Schema</h2>
+      </div>
+      <p style="font-size: 13px; color: #7B8BA8; margin-bottom: 8px;">
+        Append these table creation scripts to <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">database_setup.sql</code> as you work on your PR. The existing <strong style="color: #E2E8F0;">Users</strong> table is already created.
+      </p>
+
+      <!-- Table 1: Accounts -->
+      <div class="schema-block">
+        <div class="schema-block-header">
+          <span>1. Accounts Table — PR 2 (Anjana)</span>
+          <span class="lang">T-SQL</span>
+        </div>
+        <pre><span class="sql-comment">-- Accounts Table (PR 2 - Anjana)</span>
+<span class="sql-kw">IF NOT EXISTS</span> (<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> sys.tables <span class="sql-kw">WHERE</span> name = <span class="sql-str">'Accounts'</span>)
+<span class="sql-kw">BEGIN</span>
+    <span class="sql-kw">CREATE TABLE</span> Accounts (
+        id          <span class="sql-type">INT IDENTITY(1,1)</span> <span class="sql-kw">PRIMARY KEY</span>,
+        user_id     <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL FOREIGN KEY REFERENCES</span> Users(id) <span class="sql-kw">ON DELETE CASCADE</span>,
+        account_name <span class="sql-type">VARCHAR(100)</span> <span class="sql-kw">NOT NULL</span>,
+        account_type <span class="sql-type">VARCHAR(50)</span> <span class="sql-kw">NOT NULL</span>,
+        balance     <span class="sql-type">DECIMAL(18, 2)</span> <span class="sql-kw">NOT NULL DEFAULT</span> <span class="sql-num">0.00</span>,
+        card_number <span class="sql-type">VARCHAR(20)</span> <span class="sql-kw">NULL</span>,
+        expiry_date <span class="sql-type">VARCHAR(5)</span> <span class="sql-kw">NULL</span>,
+        color_theme <span class="sql-type">VARCHAR(50)</span> <span class="sql-kw">NULL DEFAULT</span> <span class="sql-str">'bg-blue-600'</span>,
+        created_at  <span class="sql-type">DATETIME</span> <span class="sql-kw">DEFAULT</span> <span class="sql-fn">GETDATE()</span>
+    );
+<span class="sql-kw">END</span>
+<span class="sql-kw">GO</span></pre>
+      </div>
+
+      <!-- Table 2: Transactions -->
+      <div class="schema-block">
+        <div class="schema-block-header">
+          <span>2. Transactions Table — PR 3 (Dishan)</span>
+          <span class="lang">T-SQL</span>
+        </div>
+        <pre><span class="sql-comment">-- Transactions Table (PR 3 - Dishan)</span>
+<span class="sql-kw">IF NOT EXISTS</span> (<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> sys.tables <span class="sql-kw">WHERE</span> name = <span class="sql-str">'Transactions'</span>)
+<span class="sql-kw">BEGIN</span>
+    <span class="sql-kw">CREATE TABLE</span> Transactions (
+        id               <span class="sql-type">INT IDENTITY(1,1)</span> <span class="sql-kw">PRIMARY KEY</span>,
+        user_id          <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL FOREIGN KEY REFERENCES</span> Users(id) <span class="sql-kw">ON DELETE CASCADE</span>,
+        account_id       <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL FOREIGN KEY REFERENCES</span> Accounts(id),
+        title            <span class="sql-type">VARCHAR(150)</span> <span class="sql-kw">NOT NULL</span>,
+        category         <span class="sql-type">VARCHAR(100)</span> <span class="sql-kw">NOT NULL</span>,
+        amount           <span class="sql-type">DECIMAL(18, 2)</span> <span class="sql-kw">NOT NULL</span>,
+        transaction_type <span class="sql-type">VARCHAR(10)</span> <span class="sql-kw">CHECK</span> (transaction_type <span class="sql-kw">IN</span> (<span class="sql-str">'INCOME'</span>, <span class="sql-str">'EXPENSE'</span>)),
+        transaction_date <span class="sql-type">DATETIME</span> <span class="sql-kw">DEFAULT</span> <span class="sql-fn">GETDATE()</span>,
+        created_at       <span class="sql-type">DATETIME</span> <span class="sql-kw">DEFAULT</span> <span class="sql-fn">GETDATE()</span>
+    );
+<span class="sql-kw">END</span>
+<span class="sql-kw">GO</span></pre>
+      </div>
+
+      <!-- Table 3: Budgets -->
+      <div class="schema-block">
+        <div class="schema-block-header">
+          <span>3. Budgets Table — PR 5 (Omashi)</span>
+          <span class="lang">T-SQL</span>
+        </div>
+        <pre><span class="sql-comment">-- Budgets Table (PR 5 - Omashi)</span>
+<span class="sql-kw">IF NOT EXISTS</span> (<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> sys.tables <span class="sql-kw">WHERE</span> name = <span class="sql-str">'Budgets'</span>)
+<span class="sql-kw">BEGIN</span>
+    <span class="sql-kw">CREATE TABLE</span> Budgets (
+        id            <span class="sql-type">INT IDENTITY(1,1)</span> <span class="sql-kw">PRIMARY KEY</span>,
+        user_id       <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL FOREIGN KEY REFERENCES</span> Users(id) <span class="sql-kw">ON DELETE CASCADE</span>,
+        category      <span class="sql-type">VARCHAR(100)</span> <span class="sql-kw">NOT NULL</span>,
+        monthly_limit <span class="sql-type">DECIMAL(18, 2)</span> <span class="sql-kw">NOT NULL</span>,
+        <span class="sql-kw">UNIQUE</span>(user_id, category),
+        created_at    <span class="sql-type">DATETIME</span> <span class="sql-kw">DEFAULT</span> <span class="sql-fn">GETDATE()</span>
+    );
+<span class="sql-kw">END</span>
+<span class="sql-kw">GO</span></pre>
+      </div>
+
+      <!-- Table 4: Subscriptions -->
+      <div class="schema-block">
+        <div class="schema-block-header">
+          <span>4. Subscriptions Table — PR 7 (Vijan)</span>
+          <span class="lang">T-SQL</span>
+        </div>
+        <pre><span class="sql-comment">-- Subscriptions / Bills Table (PR 7 - Vijan)</span>
+<span class="sql-kw">IF NOT EXISTS</span> (<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> sys.tables <span class="sql-kw">WHERE</span> name = <span class="sql-str">'Subscriptions'</span>)
+<span class="sql-kw">BEGIN</span>
+    <span class="sql-kw">CREATE TABLE</span> Subscriptions (
+        id           <span class="sql-type">INT IDENTITY(1,1)</span> <span class="sql-kw">PRIMARY KEY</span>,
+        user_id      <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL FOREIGN KEY REFERENCES</span> Users(id) <span class="sql-kw">ON DELETE CASCADE</span>,
+        name         <span class="sql-type">VARCHAR(100)</span> <span class="sql-kw">NOT NULL</span>,
+        amount       <span class="sql-type">DECIMAL(18, 2)</span> <span class="sql-kw">NOT NULL</span>,
+        billing_type <span class="sql-type">VARCHAR(20)</span> <span class="sql-kw">CHECK</span> (billing_type <span class="sql-kw">IN</span> (<span class="sql-str">'Monthly'</span>, <span class="sql-str">'Annual'</span>)),
+        due_day      <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL CHECK</span> (due_day <span class="sql-kw">BETWEEN</span> <span class="sql-num">1</span> <span class="sql-kw">AND</span> <span class="sql-num">31</span>),
+        icon_url     <span class="sql-type">VARCHAR(255)</span> <span class="sql-kw">NULL</span>,
+        bg_color     <span class="sql-type">VARCHAR(50)</span> <span class="sql-kw">NULL DEFAULT</span> <span class="sql-str">'bg-slate-50'</span>,
+        created_at   <span class="sql-type">DATETIME</span> <span class="sql-kw">DEFAULT</span> <span class="sql-fn">GETDATE()</span>
+    );
+<span class="sql-kw">END</span>
+<span class="sql-kw">GO</span></pre>
+      </div>
+
+      <!-- Table 5: Assets -->
+      <div class="schema-block">
+        <div class="schema-block-header">
+          <span>5. Assets Table — PR 9 (Rasanjalee)</span>
+          <span class="lang">T-SQL</span>
+        </div>
+        <pre><span class="sql-comment">-- Assets Table (PR 9 - Rasanjalee)</span>
+<span class="sql-kw">IF NOT EXISTS</span> (<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> sys.tables <span class="sql-kw">WHERE</span> name = <span class="sql-str">'Assets'</span>)
+<span class="sql-kw">BEGIN</span>
+    <span class="sql-kw">CREATE TABLE</span> Assets (
+        id                 <span class="sql-type">INT IDENTITY(1,1)</span> <span class="sql-kw">PRIMARY KEY</span>,
+        user_id            <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL FOREIGN KEY REFERENCES</span> Users(id) <span class="sql-kw">ON DELETE CASCADE</span>,
+        asset_name         <span class="sql-type">VARCHAR(150)</span> <span class="sql-kw">NOT NULL</span>,
+        asset_type         <span class="sql-type">VARCHAR(50)</span> <span class="sql-kw">NOT NULL</span>,
+        amount             <span class="sql-type">DECIMAL(18, 2)</span> <span class="sql-kw">NOT NULL</span>,
+        growth_rate        <span class="sql-type">DECIMAL(5, 2)</span> <span class="sql-kw">NOT NULL</span>,
+        is_growth_positive <span class="sql-type">BIT</span> <span class="sql-kw">NOT NULL DEFAULT</span> <span class="sql-num">1</span>,
+        created_at         <span class="sql-type">DATETIME</span> <span class="sql-kw">DEFAULT</span> <span class="sql-fn">GETDATE()</span>
+    );
+<span class="sql-kw">END</span>
+<span class="sql-kw">GO</span></pre>
+      </div>
+
+      <!-- Table 6: PortfolioHistory -->
+      <div class="schema-block">
+        <div class="schema-block-header">
+          <span>6. PortfolioHistory Table — PR 8 (Rasodya)</span>
+          <span class="lang">T-SQL</span>
+        </div>
+        <pre><span class="sql-comment">-- PortfolioHistory Table (PR 8 - Rasodya)</span>
+<span class="sql-kw">IF NOT EXISTS</span> (<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> sys.tables <span class="sql-kw">WHERE</span> name = <span class="sql-str">'PortfolioHistory'</span>)
+<span class="sql-kw">BEGIN</span>
+    <span class="sql-kw">CREATE TABLE</span> PortfolioHistory (
+        id              <span class="sql-type">INT IDENTITY(1,1)</span> <span class="sql-kw">PRIMARY KEY</span>,
+        user_id         <span class="sql-type">INT</span> <span class="sql-kw">NOT NULL FOREIGN KEY REFERENCES</span> Users(id) <span class="sql-kw">ON DELETE CASCADE</span>,
+        record_date     <span class="sql-type">DATE</span> <span class="sql-kw">NOT NULL</span>,
+        portfolio_value <span class="sql-type">DECIMAL(18, 2)</span> <span class="sql-kw">NOT NULL</span>,
+        <span class="sql-kw">UNIQUE</span>(user_id, record_date)
+    );
+<span class="sql-kw">END</span>
+<span class="sql-kw">GO</span></pre>
+      </div>
+    </section>
+
+    <!-- ===== TASK DETAILS ===== -->
+    <section class="section" id="tasks" style="animation-delay: 0.4s">
+      <div class="section-header">
+        <div class="icon" style="background: rgba(37,99,235,0.12);">👤</div>
+        <h2>Task Assignments &amp; Detailed Instructions</h2>
+      </div>
+
+      <!-- TASK 1 -->
+      <div class="task-card open" id="task-1">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #f97316, #ea580c);">1</div>
+          <div class="task-meta">
+            <h3>Auth Middleware &amp; Router Guard</h3>
+            <div class="assignee">👤 Bhashitha (Team Lead)</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-complex">Complex</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Review existing stored procedures <code>register_user_proc</code> and <code>login_user_proc</code>.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Implement a JWT Token Verification dependency (<code>get_current_user</code>) in <span class="file-ref">backend/app/utils/security.py</span> that decodes standard <code>Authorization: Bearer &lt;token&gt;</code> headers.</li>
+                <li>Expose this dependency to secure other APIs.</li>
+                <li>Enable CORS configuration in <span class="file-ref">backend/app/main.py</span> to allow React (<code>http://localhost:5173</code>) to make API requests.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Update <span class="file-ref">frontend/src/services/api.js</span> to dynamically include the JWT token from <code>localStorage</code> in request headers using an Axios Request Interceptor.</li>
+                <li>Update <span class="file-ref">frontend/src/context/AuthContext.jsx</span> to load credentials from <code>localStorage</code> on boot.</li>
+                <li>Implement a Router Guard in <span class="file-ref">frontend/src/App.jsx</span> to redirect non-logged-in users from pages like <code>/dashboard</code> back to the landing page <code>/</code>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 2 -->
+      <div class="task-card" id="task-2">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #f97316, #ea580c);">2</div>
+          <div class="task-meta">
+            <h3>Account / Wallet Management</h3>
+            <div class="assignee">👤 Anjana</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-complex">Complex</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create Stored Procedure <code>add_account_proc</code>: Creates an account for a user.</li>
+                <li>Create Stored Procedure <code>get_user_accounts_proc</code>: Fetches all linked accounts for the current user.</li>
+                <li>Create Stored Procedure <code>delete_account_proc</code>: Removes a linked account.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Create schema file <span class="file-ref">backend/app/schemas/account.py</span>.</li>
+                <li>Create service wrapper in <span class="file-ref">backend/app/services/account_service.py</span> to execute procedures.</li>
+                <li>Build route endpoints in <span class="file-ref">backend/app/routes/account.py</span>: <code>GET /accounts</code>, <code>POST /accounts</code>, <code>DELETE /accounts/{id}</code> — all protected by <code>get_current_user</code>.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Connect <span class="file-ref">MyWallet.jsx</span> — pull user accounts from backend instead of mock data.</li>
+                <li>Enable the "Add Card" Modal to dynamically POST new cards/accounts to the backend database.</li>
+                <li>Calculate Net Worth dynamically based on fetched balance sums.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 3 -->
+      <div class="task-card" id="task-3">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #f97316, #ea580c);">3</div>
+          <div class="task-meta">
+            <h3>Transaction Ledger &amp; APIs</h3>
+            <div class="assignee">👤 Dishan</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-complex">Complex</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create Stored Procedure <code>add_transaction_proc</code>: Inserts a transaction. <strong style="color: #fbbf24;">Crucially</strong>, when an expense or income is added, it must update the corresponding <code>balance</code> in the <code>Accounts</code> table inside a transaction block (<code>BEGIN TRANSACTION ... COMMIT</code>).</li>
+                <li>Create Stored Procedure <code>get_user_transactions_proc</code>: Fetches the transactions history filtered by user.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Create schema file <span class="file-ref">backend/app/schemas/transaction.py</span>.</li>
+                <li>Create service wrapper <span class="file-ref">backend/app/services/transaction_service.py</span>.</li>
+                <li>Create route endpoints in <span class="file-ref">backend/app/routes/transaction.py</span>: <code>GET /transactions</code>, <code>POST /transactions</code> — protected by <code>get_current_user</code>.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Create a reusable popup/form or add section on <span class="file-ref">MyWallet.jsx</span> or <span class="file-ref">Dashboard.jsx</span> to submit transactions.</li>
+                <li>Fetch and populate transactions list dynamically.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 4 -->
+      <div class="task-card" id="task-4">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #f97316, #ea580c);">4</div>
+          <div class="task-meta">
+            <h3>Dashboard Overview Stats</h3>
+            <div class="assignee">👤 Dinesh</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-complex">Complex</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create View or Stored Procedure <code>get_dashboard_summary_proc</code>: Dynamically sums user cash accounts balance, investment balance, sums monthly spend, and calculates current savings rate.</li>
+                <li>Create Stored Procedure <code>get_recent_transactions_proc</code>: Retrieves the last 5 transactions for a user.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Create service wrappers and route endpoints under <span class="file-ref">backend/app/routes/dashboard.py</span> (<code>GET /dashboard/summary</code>).</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Connect <span class="file-ref">Dashboard.jsx</span> overview cards to pull real-time data: Net Worth, Monthly Spend, Savings Rate.</li>
+                <li>Replace mock transaction rows with the dynamic list returned by <code>get_recent_transactions_proc</code>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 5 -->
+      <div class="task-card" id="task-5">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">5</div>
+          <div class="task-meta">
+            <h3>Budget Limits &amp; Category Management</h3>
+            <div class="assignee">👤 Omashi</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-medium">Medium</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create Stored Procedure <code>set_budget_limit_proc</code>: Creates/updates category monthly budgets.</li>
+                <li>Create Stored Procedure <code>get_budgets_with_spent_proc</code>: Calculates spent amounts per category in the current month by executing <code>SUM(amount)</code> from <code>Transactions</code> grouped by category, and joins with the <code>Budgets</code> limits.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Create schemas, services, and routes <span class="file-ref">backend/app/routes/budget.py</span> (<code>GET /budgets</code> and <code>POST /budgets</code>).</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Connect <span class="file-ref">Expenses.jsx</span> — retrieve the list of budgets + dynamic progress percentages.</li>
+                <li>Wire up the "Add Category" modal to submit new limits to the database.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 6 -->
+      <div class="task-card" id="task-6">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #22c55e, #16a34a);">6</div>
+          <div class="task-meta">
+            <h3>Overspending Alerts &amp; Smart Tips</h3>
+            <div class="assignee">👤 Kavinda</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-less">Less Complex</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Develop a Database View or simple query logic: check for any category where <code>Spent &gt; Limit</code> for the current month.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Create a simple API route <code>GET /budgets/alerts</code> that checks if there is any overspent category and returns its details.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>In <span class="file-ref">Expenses.jsx</span>, replace the hardcoded "Overspending Alert" with data fetched from the alerts API.</li>
+                <li>If no categories are overspent, display the "Budget on Track" positive banner.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 7 -->
+      <div class="task-card" id="task-7">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">7</div>
+          <div class="task-meta">
+            <h3>Bills &amp; Subscriptions Tracker</h3>
+            <div class="assignee">👤 Vijan</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-medium">Medium</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create Stored Procedure <code>add_subscription_proc</code>: Inserts a new subscription.</li>
+                <li>Create Stored Procedure <code>get_subscriptions_proc</code>: Fetches all user subscriptions.</li>
+                <li>Create Stored Procedure <code>delete_subscription_proc</code>: Deletes a subscription.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Create schema <span class="file-ref">subscription.py</span>, service wrappers, and endpoints <span class="file-ref">backend/app/routes/subscription.py</span>: <code>GET /subscriptions</code>, <code>POST /subscriptions</code>, <code>DELETE /subscriptions/{id}</code>.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Connect <span class="file-ref">Bills.jsx</span> — populate calendar indicators (which days have subscriptions due) dynamically.</li>
+                <li>Enable the dynamic lists on "Month" and "List" tabs.</li>
+                <li>Calculate "Monthly Commitments" sum dynamically.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 8 -->
+      <div class="task-card" id="task-8">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">8</div>
+          <div class="task-meta">
+            <h3>Investments Performance Timeline</h3>
+            <div class="assignee">👤 Rasodya</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-medium">Medium</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Populate sample history in <code>PortfolioHistory</code> for testing.</li>
+                <li>Create Stored Procedure <code>get_portfolio_history_proc</code>: Fetches record dates and portfolio values filtered by period (1W, 1M, 1Y).</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Create service wrapper and route <code>/investments/history?timeframe={1W|1M|1Y}</code>.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Connect <span class="file-ref">Investments.jsx</span> line chart component.</li>
+                <li>Trigger fetch on timeframe toggle (<code>1W</code>, <code>1M</code>, <code>1Y</code>) and bind chart data dynamically to Recharts.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 9 -->
+      <div class="task-card" id="task-9">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">9</div>
+          <div class="task-meta">
+            <h3>Asset Allocation &amp; Active Assets</h3>
+            <div class="assignee">👤 Rasanjalee</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-medium">Medium</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create Stored Procedure <code>get_user_assets_proc</code>: Fetches all investments/assets.</li>
+                <li>Create Stored Procedure <code>add_asset_proc</code>: Links a new stock/crypto/ETF asset.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Expose endpoints <code>GET /investments/assets</code> and <code>POST /investments/assets</code>.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>In <span class="file-ref">Investments.jsx</span>, map the assets list dynamically.</li>
+                <li>Compute the allocation percentages (Stocks vs Crypto vs Real Estate) on the fly or in SQL to render the Pie Chart correctly.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 10 -->
+      <div class="task-card" id="task-10">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #22c55e, #16a34a);">10</div>
+          <div class="task-meta">
+            <h3>Profile Details &amp; Password Security</h3>
+            <div class="assignee">👤 Kavindi</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-less">Less Complex</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create Stored Procedure <code>update_profile_proc</code>: Updates user name/email.</li>
+                <li>Create Stored Procedure <code>change_password_proc</code>: Updates the hash value.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Add endpoints to settings route <span class="file-ref">backend/app/routes/settings.py</span>: <code>PUT /settings/profile</code>, <code>PUT /settings/change-password</code>.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Connect <span class="file-ref">Settings.jsx</span> — allow editing profile details and submitting changes.</li>
+                <li>Wire up the change password form, verifying input matching.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK 11 -->
+      <div class="task-card" id="task-11">
+        <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="task-num" style="background: linear-gradient(135deg, #f97316, #ea580c);">11</div>
+          <div class="task-meta">
+            <h3>Detailed Analytics &amp; Data Export</h3>
+            <div class="assignee">👤 Divya</div>
+          </div>
+          <div class="task-badges"><span class="task-badge badge-complex">Complex</span></div>
+          <button class="task-toggle">▾</button>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            <div class="layer layer-db">
+              <div class="layer-title">🗄️ Database</div>
+              <ul>
+                <li>Create View/Procedure <code>get_detailed_analytics_proc</code>: Summarizes daily/weekly/monthly aggregated income vs expenses.</li>
+              </ul>
+            </div>
+            <div class="layer layer-be">
+              <div class="layer-title">⚙️ Backend (FastAPI)</div>
+              <ul>
+                <li>Expose <code>GET /analytics/summary</code> for Recharts graphs on <span class="file-ref">Analytics.jsx</span>.</li>
+                <li>Implement endpoint <code>GET /analytics/export</code> that fetches transaction history, generates a CSV formatted file, and sends it as a downloadable attachment.</li>
+              </ul>
+            </div>
+            <div class="layer layer-fe">
+              <div class="layer-title">🎨 Frontend (React)</div>
+              <ul>
+                <li>Bind <span class="file-ref">Analytics.jsx</span> charts to fetched data.</li>
+                <li>Wire up the "Export Data" button to initiate file download from the backend.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TIPS ===== -->
+    <section class="section" id="tips" style="animation-delay: 0.45s">
+      <div class="section-header">
+        <div class="icon" style="background: rgba(251,191,36,0.12);">💡</div>
+        <h2>Suggestions for Success</h2>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">1</div>
+        <div class="tip-content">
+          <h4>JWT Handling</h4>
+          <p>Store the token securely in the frontend. If the API returns a <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#f87171;">401 Unauthorized</code> response, redirect the user back to the landing page and clear their local storage.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">2</div>
+        <div class="tip-content">
+          <h4>Transactions &amp; Balances</h4>
+          <p>Ensure that any transaction inserted dynamically runs alongside a corresponding account balance update inside an SQL transaction block (<code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">BEGIN TRANSACTION ... COMMIT TRANSACTION</code>) to avoid database state drift.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">3</div>
+        <div class="tip-content">
+          <h4>ODBC Drivers</h4>
+          <p>Ensure all local setups have the <strong style="color: #E2E8F0;">SQL Server ODBC Driver 17</strong> installed. Download it from the official Microsoft page if you haven't already.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">4</div>
+        <div class="tip-content">
+          <h4>Backend Pattern to Follow</h4>
+          <p>Every new feature follows the same structure: <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">schemas/</code> → <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">services/</code> → <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">routes/</code>. Look at the existing <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">auth</code> implementation as the reference template.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">5</div>
+        <div class="tip-content">
+          <h4>Branch Naming</h4>
+          <p>Use the convention <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">feature/pr{N}-{short-name}</code>, e.g. <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">feature/pr2-wallet</code>. Always branch from <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; color:#e2e8f0;">main</code> after pulling the latest merged PR.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+      <p><span class="brand">BudgetMate</span> — ADBMS Group Project Task Division</p>
+      <p style="margin-top: 6px; font-size: 11px; color: #334155;">Generated on June 2026 · React + Vite + FastAPI + Azure SQL</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
