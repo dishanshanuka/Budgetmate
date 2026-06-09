@@ -255,6 +255,8 @@ BEGIN
         bg_color = @bg_color
     WHERE id = @id
       AND user_id = @user_id;
+
+    SELECT @@ROWCOUNT AS rows_affected;
 END
 GO
 
@@ -269,6 +271,8 @@ BEGIN
     DELETE FROM Subscriptions
     WHERE id = @id
       AND user_id = @user_id;
+
+    SELECT @@ROWCOUNT AS rows_affected;
 END
 GO
 

@@ -12,7 +12,7 @@ def get_subscriptions(user_id: int):
         cursor = conn.cursor()
 
         cursor.execute(
-            "SELECT id, name, amount, billing_type, due_day, due_month, icon_url, bg_color, created_at FROM Subscriptions WHERE user_id = ? ORDER BY due_day",
+            "EXEC get_subscriptions_proc ?",
             (user_id,)
         )
 
@@ -39,10 +39,7 @@ def add_subscription(user_id: int, data):
         cursor = conn.cursor()
 
         cursor.execute(
-            """
-            INSERT INTO Subscriptions (user_id, name, amount, billing_type, due_day, due_month, icon_url, bg_color)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """,
+            "EXEC add_subscription_proc ?, ?, ?, ?, ?, ?, ?, ?",
             (
                 user_id,
                 data.name,
@@ -55,8 +52,10 @@ def add_subscription(user_id: int, data):
             )
         )
 
+        row = cursor.fetchone()
+        new_id = row[0] if row else None
         conn.commit()
-        return True
+        return new_id is not None
 
     except Exception as e:
         logger.error(f"[ERROR] add_subscription: {str(e)}")
@@ -75,8 +74,10 @@ def update_subscription(subscription_id: int, user_id: int, data):
         cursor = conn.cursor()
 
         cursor.execute(
-            "UPDATE Subscriptions SET name = ?, amount = ?, billing_type = ?, due_day = ?, due_month = ?, icon_url = ?, bg_color = ? WHERE id = ? AND user_id = ?",
+            "EXEC update_subscription_proc ?, ?, ?, ?, ?, ?, ?, ?, ?",
             (
+                subscription_id,
+                user_id,
                 data.name,
                 data.amount,
                 data.billing_type,
@@ -84,12 +85,15 @@ def update_subscription(subscription_id: int, user_id: int, data):
                 data.due_month,
                 data.icon_url,
                 data.bg_color,
-                subscription_id,
-                user_id,
             )
         )
 
-        rows_affected = cursor.rowcount
+        try:
+            row = cursor.fetchone()
+            rows_affected = row[0] if row is not None else cursor.rowcount
+        except Exception:
+            rows_affected = cursor.rowcount
+
         conn.commit()
         return rows_affected > 0, None
 
@@ -110,11 +114,16 @@ def delete_subscription(subscription_id: int, user_id: int):
         cursor = conn.cursor()
 
         cursor.execute(
-            "DELETE FROM Subscriptions WHERE id = ? AND user_id = ?",
+            "EXEC delete_subscription_proc ?, ?",
             (subscription_id, user_id)
         )
 
-        rows_affected = cursor.rowcount
+        try:
+            row = cursor.fetchone()
+            rows_affected = row[0] if row is not None else cursor.rowcount
+        except Exception:
+            rows_affected = cursor.rowcount
+
         conn.commit()
         return rows_affected > 0
 
