@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware 
 from app.config.db import init_db
-from app.routes import auth, account
+
 from app.routes.transaction import router as transaction_router
+from app.routes import auth 
+from app.routes import auth, account , subscription
 import uvicorn
 
 app = FastAPI(title="BudgetMate API - Professional Mode")
@@ -22,8 +24,10 @@ app.add_middleware(
 
 # Registering our route modules
 app.include_router(auth.router, prefix="/auth")
-app.include_router(account.router, prefix="/accounts") 
+
 app.include_router(transaction_router, prefix="/transactions")
+app.include_router(account.router, prefix="/accounts")
+app.include_router(subscription.router, prefix="/subscriptions") 
 
 @app.on_event("startup")
 async def startup():
