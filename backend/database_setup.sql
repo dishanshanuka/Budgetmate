@@ -155,6 +155,7 @@ BEGIN
         amount DECIMAL(10,2) NOT NULL,
         billing_type VARCHAR(20) NOT NULL,
         due_day INT NOT NULL,
+        due_month INT NULL,
         icon_url VARCHAR(255) NULL,
         bg_color VARCHAR(50) NULL,
         created_at DATETIME DEFAULT GETDATE()
@@ -174,6 +175,7 @@ BEGIN
         amount,
         billing_type,
         due_day,
+        due_month,
         icon_url,
         bg_color,
         created_at
@@ -188,6 +190,7 @@ CREATE OR ALTER PROCEDURE add_subscription_proc
     @amount DECIMAL(10,2),
     @billing_type VARCHAR(20),
     @due_day INT,
+    @due_month INT = NULL,
     @icon_url VARCHAR(255) = NULL,
     @bg_color VARCHAR(50) = NULL
 AS
@@ -200,6 +203,7 @@ BEGIN
         amount,
         billing_type,
         due_day,
+        due_month,
         icon_url,
         bg_color
     )
@@ -209,6 +213,7 @@ BEGIN
         @amount,
         @billing_type,
         @due_day,
+        @due_month,
         @icon_url,
         @bg_color
     );
@@ -217,7 +222,34 @@ BEGIN
 END
 GO
 
--- 10. Create Delete Subscription Procedure
+-- 10. Create Update Subscription Procedure
+CREATE OR ALTER PROCEDURE update_subscription_proc
+    @id INT,
+    @name VARCHAR(100),
+    @amount DECIMAL(10,2),
+    @billing_type VARCHAR(20),
+    @due_day INT,
+    @due_month INT = NULL,
+    @icon_url VARCHAR(255) = NULL,
+    @bg_color VARCHAR(50) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Subscriptions
+    SET
+        name = @name,
+        amount = @amount,
+        billing_type = @billing_type,
+        due_day = @due_day,
+        due_month = @due_month,
+        icon_url = @icon_url,
+        bg_color = @bg_color
+    WHERE id = @id;
+END
+GO
+
+-- 11. Create Delete Subscription Procedure
 CREATE OR ALTER PROCEDURE delete_subscription_proc
     @id INT
 AS
