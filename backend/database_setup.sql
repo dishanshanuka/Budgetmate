@@ -261,3 +261,18 @@ BEGIN
 END
 GO
 
+--12. Add Budget Table
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Budgets')
+BEGIN
+    CREATE TABLE Budgets (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        user_id INT NOT NULL FOREIGN KEY REFERENCES Users(id) ON DELETE CASCADE,
+        category VARCHAR(100) NOT NULL,
+        monthly_limit DECIMAL(18,2) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+
+        UNIQUE(user_id, category)
+    );
+END
+GO
+
