@@ -6,7 +6,6 @@ def create_transaction_in_db(user_id: int, tx: TransactionCreate):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Executing our Azure SQL stored procedure
         sql = """
         DECLARE @status VARCHAR(50);
         EXEC add_transaction_proc ?, ?, ?, ?, ?, ?, @status OUTPUT;
@@ -35,7 +34,6 @@ def get_user_transactions_from_db(user_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Fetching transaction history using stored procedure
         cursor.execute("EXEC get_user_transactions_proc ?", (user_id,))
         rows = cursor.fetchall()
         
