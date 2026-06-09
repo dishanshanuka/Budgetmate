@@ -276,3 +276,28 @@ BEGIN
 END
 GO
 
+-- 2. set_budget_limit_proc
+CREATE OR ALTER PROCEDURE set_budget_limit_proc
+    @user_id       INT,
+    @category      VARCHAR(100),
+    @monthly_limit DECIMAL(18, 2),
+    @status        VARCHAR(50) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+ 
+    IF EXISTS (SELECT 1 FROM Budgets WHERE user_id = @user_id AND category = @category)
+    BEGIN
+        UPDATE Budgets
+        SET monthly_limit = @monthly_limit
+        WHERE user_id = @user_id AND category = @category;
+        SET @status = 'UPDATED';
+    END
+    ELSE
+    BEGIN
+        INSERT INTO Budgets (user_id, category, monthly_limit)
+        VALUES (@user_id, @category, @monthly_limit);
+        SET @status = 'CREATED';
+    END
+END
+GO
