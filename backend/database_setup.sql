@@ -141,3 +141,91 @@ BEGIN
   SELECT @@ROWCOUNT AS rows_affected
 END
 GO
+
+-- 7. Create Subscription table
+IF NOT EXISTS (
+    SELECT *
+    FROM sys.tables
+    WHERE name = 'Subscriptions'
+)
+BEGIN
+    CREATE TABLE Subscriptions (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        amount DECIMAL(10,2) NOT NULL,
+        billing_type VARCHAR(20) NOT NULL,
+        due_day INT NOT NULL,
+        icon_url VARCHAR(255) NULL,
+        bg_color VARCHAR(50) NULL,
+        created_at DATETIME DEFAULT GETDATE()
+    );
+END
+GO
+
+-- 8. Create Get Subscriptions Procedure
+CREATE OR ALTER PROCEDURE get_subscriptions_proc
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        id,
+        name,
+        amount,
+        billing_type,
+        due_day,
+        icon_url,
+        bg_color,
+        created_at
+    FROM Subscriptions
+    ORDER BY due_day;
+END
+GO
+
+-- 9. Create Add Subscription Procedure
+CREATE OR ALTER PROCEDURE add_subscription_proc
+    @name VARCHAR(100),
+    @amount DECIMAL(10,2),
+    @billing_type VARCHAR(20),
+    @due_day INT,
+    @icon_url VARCHAR(255) = NULL,
+    @bg_color VARCHAR(50) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO Subscriptions
+    (
+        name,
+        amount,
+        billing_type,
+        due_day,
+        icon_url,
+        bg_color
+    )
+    VALUES
+    (
+        @name,
+        @amount,
+        @billing_type,
+        @due_day,
+        @icon_url,
+        @bg_color
+    );
+
+    SELECT SCOPE_IDENTITY() AS subscription_id;
+END
+GO
+
+-- 10. Create Delete Subscription Procedure
+CREATE OR ALTER PROCEDURE delete_subscription_proc
+    @id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DELETE FROM Subscriptions
+    WHERE id = @id;
+END
+GO
+
