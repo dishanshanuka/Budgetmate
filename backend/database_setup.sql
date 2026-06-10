@@ -276,7 +276,7 @@ BEGIN
 END
 GO
 
--- 2. set_budget_limit_proc
+-- 13. set_budget_limit_proc
 CREATE OR ALTER PROCEDURE set_budget_limit_proc
     @user_id       INT,
     @category      VARCHAR(100),
@@ -301,3 +301,57 @@ BEGIN
     END
 END
 GO
+
+-- 14. get_budgets_with_spent_proc
+--    Returns every budget row for a user, joined with the SUM spent
+--    in the CURRENT calendar month from the Transactions table.
+CREATE OR ALTER PROCEDURE get_budgets_with_spent_proc
+    @user_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+ 
+    SELECT
+        b.id,
+        b.category,
+        b.monthly_limit,
+        ISNULL(SUM(t.amount), 0) AS spent,
+        b.created_at
+    FROM Budgets b
+    LEFT JOIN Transactions t
+        ON  t.user_id        = b.user_id
+        AND t.category       = b.category
+        AND t.transaction_type = 'EXPENSE'
+        AND MONTH(t.transaction_date)  = MONTH(GETDATE())
+        AND YEAR(t.transaction_date)   = YEAR(GETDATE())
+    WHERE b.user_id = @user_id
+    GROUP BY
+        b.id,
+        b.category,
+        b.monthly_limit,
+        b.created_at
+    ORDER BY b.created_at;
+END
+GO
+
+-- 15. delete_budget_proc  (bonus — handy for removing a category)
+CREATE OR ALTER PROCEDURE delete_budget_proc
+    @budget_id INT,
+    @user_id   INT,
+    @status    VARCHAR(50) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+ 
+    IF EXISTS (SELECT 1 FROM Budgets WHERE id = @budget_id AND user_id = @user_id)
+    BEGIN
+        DELETE FROM Budgets WHERE id = @budget_id AND user_id = @user_id;
+        SET @status = 'DELETED';
+    END
+    ELSE
+    BEGIN
+        SET @status = 'NOT_FOUND';
+    END
+END
+GO
+ 
