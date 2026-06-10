@@ -248,7 +248,7 @@ const Expenses = () => {
           {/* Add New Category Button */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="border-2 border-dashed border-blue-300 rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-blue-500 bg-blue-50/40 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-100/60 transition-all cursor-pointer group"
+            className="border-2 border-dashed border-blue-400 rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-blue-500 bg-blue-50 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-100 transition-all cursor-pointer group"
           >
             <Plus size={40} className="mb-3 group-hover:rotate-90 transition-transform duration-300" />
             <p className="text-xs font-black uppercase tracking-[0.2em]">Add Category</p>
