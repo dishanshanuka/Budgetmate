@@ -1,5 +1,6 @@
 from app.config.db import get_db_connection
 from app.schemas.budget import BudgetCreate
+import oracledb
 
 
 def set_budget_in_db(user_id: int, budget: BudgetCreate):
@@ -9,17 +10,14 @@ def set_budget_in_db(user_id: int, budget: BudgetCreate):
         return {"status": "ERROR", "message": "Database connection failed"}
     cursor = conn.cursor()
     try:
-        sql = """
-        DECLARE @status VARCHAR(50);
-        EXEC set_budget_limit_proc ?, ?, ?, @status OUTPUT;
-        SELECT @status;
-        """
-        cursor.execute(sql, (user_id, budget.category, budget.monthly_limit))
-        result = cursor.fetchone()
+        status_var = cursor.var(str)
+        cursor.callproc(
+            "set_budget_limit_proc",
+            [user_id, budget.category, budget.monthly_limit, status_var]
+        )
         conn.commit()
 
-        status = result[0] if result else "FAILED"
-        return {"status": status}
+        return {"status": status_var.getvalue() or "FAILED"}
     except Exception as e:
         print(f"[BUDGET] set_budget_in_db error: {e}")
         return {"status": "ERROR", "message": str(e)}
@@ -35,8 +33,14 @@ def get_budgets_from_db(user_id: int):
         return []
     cursor = conn.cursor()
     try:
-        cursor.execute("EXEC get_budgets_with_spent_proc ?", (user_id,))
-        rows = cursor.fetchall()
+        result = cursor.var(oracledb.DB_TYPE_CURSOR)
+        cursor.callproc("get_budgets_with_spent_proc", [user_id, result])
+
+        result_cursor = result.getvalue()
+        try:
+            rows = result_cursor.fetchall()
+        finally:
+            result_cursor.close()
 
         return [
             {
@@ -63,17 +67,11 @@ def delete_budget_from_db(budget_id: int, user_id: int):
         return {"status": "ERROR", "message": "Database connection failed"}
     cursor = conn.cursor()
     try:
-        sql = """
-        DECLARE @status VARCHAR(50);
-        EXEC delete_budget_proc ?, ?, @status OUTPUT;
-        SELECT @status;
-        """
-        cursor.execute(sql, (budget_id, user_id))
-        result = cursor.fetchone()
+        status_var = cursor.var(str)
+        cursor.callproc("delete_budget_proc", [budget_id, user_id, status_var])
         conn.commit()
 
-        status = result[0] if result else "FAILED"
-        return {"status": status}
+        return {"status": status_var.getvalue() or "FAILED"}
     except Exception as e:
         print(f"[BUDGET] delete_budget_from_db error: {e}")
         return {"status": "ERROR", "message": str(e)}

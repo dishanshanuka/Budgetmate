@@ -1,4 +1,5 @@
 from app.config.db import get_db_connection
+import oracledb
 import logging
 
 logger = logging.getLogger(__name__)
@@ -10,17 +11,29 @@ def get_subscriptions(user_id: int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        result = cursor.var(oracledb.DB_TYPE_CURSOR)
 
-        cursor.execute(
-            "EXEC get_subscriptions_proc ?",
-            (user_id,)
-        )
+        cursor.callproc("get_subscriptions_proc", [user_id, result])
 
-        rows = cursor.fetchall()
-        columns = [col[0] for col in cursor.description]
+        result_cursor = result.getvalue()
+        try:
+            rows = result_cursor.fetchall()
+        finally:
+            result_cursor.close()
 
-        subscriptions = [dict(zip(columns, row)) for row in rows]
-        return subscriptions
+        return [
+            {
+                "id": r[0],
+                "name": r[1],
+                "amount": float(r[2] or 0),
+                "billing_type": r[3],
+                "due_day": r[4],
+                "due_month": r[5],
+                "icon_url": r[6],
+                "bg_color": r[7],
+            }
+            for r in rows
+        ]
 
     except Exception as e:
         logger.error(f"[ERROR] get_subscriptions: {str(e)}")
@@ -37,10 +50,11 @@ def add_subscription(user_id: int, data):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        new_id = cursor.var(int)
 
-        cursor.execute(
-            "EXEC add_subscription_proc ?, ?, ?, ?, ?, ?, ?, ?",
-            (
+        cursor.callproc(
+            "add_subscription_proc",
+            [
                 user_id,
                 data.name,
                 data.amount,
@@ -49,13 +63,12 @@ def add_subscription(user_id: int, data):
                 data.due_month,
                 data.icon_url,
                 data.bg_color,
-            )
+                new_id,
+            ]
         )
 
-        row = cursor.fetchone()
-        new_id = row[0] if row else None
         conn.commit()
-        return new_id is not None
+        return new_id.getvalue() is not None
 
     except Exception as e:
         logger.error(f"[ERROR] add_subscription: {str(e)}")
@@ -72,10 +85,11 @@ def update_subscription(subscription_id: int, user_id: int, data):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        rows_affected = cursor.var(int)
 
-        cursor.execute(
-            "EXEC update_subscription_proc ?, ?, ?, ?, ?, ?, ?, ?, ?",
-            (
+        cursor.callproc(
+            "update_subscription_proc",
+            [
                 subscription_id,
                 user_id,
                 data.name,
@@ -85,17 +99,12 @@ def update_subscription(subscription_id: int, user_id: int, data):
                 data.due_month,
                 data.icon_url,
                 data.bg_color,
-            )
+                rows_affected,
+            ]
         )
 
-        try:
-            row = cursor.fetchone()
-            rows_affected = row[0] if row is not None else cursor.rowcount
-        except Exception:
-            rows_affected = cursor.rowcount
-
         conn.commit()
-        return rows_affected > 0, None
+        return (rows_affected.getvalue() or 0) > 0, None
 
     except Exception as e:
         logger.error(f"[ERROR] update_subscription: {str(e)}")
@@ -112,20 +121,15 @@ def delete_subscription(subscription_id: int, user_id: int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        rows_affected = cursor.var(int)
 
-        cursor.execute(
-            "EXEC delete_subscription_proc ?, ?",
-            (subscription_id, user_id)
+        cursor.callproc(
+            "delete_subscription_proc",
+            [subscription_id, user_id, rows_affected]
         )
 
-        try:
-            row = cursor.fetchone()
-            rows_affected = row[0] if row is not None else cursor.rowcount
-        except Exception:
-            rows_affected = cursor.rowcount
-
         conn.commit()
-        return rows_affected > 0
+        return (rows_affected.getvalue() or 0) > 0
 
     except Exception as e:
         logger.error(f"[ERROR] delete_subscription: {str(e)}")

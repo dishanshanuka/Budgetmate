@@ -1,5 +1,5 @@
 import os
-import pyodbc
+import oracledb
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -8,47 +8,49 @@ base_dir = Path(__file__).resolve().parent.parent.parent
 env_path = base_dir / '.env'
 load_dotenv(dotenv_path=env_path)
 
+# Global Pool Variable
+pool = None
+
+def get_pool():
+    global pool
+    if pool is None:
+        try:
+            db_user = os.getenv('DB_USER')
+            db_password = os.getenv('DB_PASSWORD')
+            db_dsn = os.getenv('DB_DSN')
+            wallet_location = os.getenv('WALLET_LOCATION')
+
+            # Connection Pool creation
+            pool = oracledb.create_pool(
+                user=db_user,
+                password=db_password,
+                dsn=db_dsn,
+                config_dir=wallet_location,
+                wallet_location=wallet_location,
+                wallet_password=db_password,
+                min=2, 
+                max=10, 
+                increment=1
+            )
+            print("📦 Database Connection Pool Created!")
+        except Exception as e:
+            print(f"❌ Pool Creation Error: {e}")
+    return pool
+
 def get_db_connection():
     try:
-        driver = os.getenv('DB_DRIVER', '{ODBC Driver 17 for SQL Server}')
-        server = os.getenv('DB_SERVER')
-        database = os.getenv('DB_DATABASE')
-        user = os.getenv('DB_USER')
-        password = os.getenv('DB_PASSWORD')
-        
-        conn_str = (
-            f"Driver={driver};"
-            f"Server={server};"
-            f"Database={database};"
-            f"Uid={user};"
-            f"Pwd={password};"
-            "Encrypt=yes;"
-            "TrustServerCertificate=no;"
-            "Connection Timeout=30;"
-        )
-        
-        return pyodbc.connect(conn_str)
+        pool = get_pool()
+        if pool:
+            return pool.acquire()
+        return None
     except Exception as e:
-        print(f"[DB] Database Connection Error: {e}")
+        print(f"❌ Connection Error: {e}")
         return None
 
 def init_db():
-    print("[DB] Initializing Database...")
-    conn = get_db_connection()
-    if conn:
-        try:
-            cursor = conn.cursor()
-            cursor.execute("""
-            IF COL_LENGTH('Users', 'profile_photo') IS NULL
-            BEGIN
-                ALTER TABLE Users ADD profile_photo NVARCHAR(MAX) NULL;
-            END
-            """)
-            conn.commit()
-            cursor.close()
-        except Exception as e:
-            print(f"[DB] Migration warning: {e}")
-        print("[DB] Successfully connected to Azure SQL Database!")
-        conn.close()
+    print("🔄 Initializing Database...")
+    pool = get_pool()
+    if pool:
+        print("✅ Successfully connected to Oracle Cloud Database with Pooling!")
     else:
-        print("[DB] Connection failed!")
+        print("❌ Connection failed!")

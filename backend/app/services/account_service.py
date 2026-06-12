@@ -1,4 +1,5 @@
 from app.config.db import get_db_connection
+import oracledb
 import logging
 
 logger = logging.getLogger(__name__)
@@ -10,16 +11,29 @@ def get_user_accounts(user_id: int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        result = cursor.var(oracledb.DB_TYPE_CURSOR)
 
-        cursor.execute(
-            "EXEC get_user_accounts_proc ?",
-            (user_id,)
-        )
-        rows = cursor.fetchall()
-        columns = [col[0] for col in cursor.description]
+        cursor.callproc("get_user_accounts_proc", [user_id, result])
 
-        accounts = [dict(zip(columns, row)) for row in rows]
-        return accounts
+        result_cursor = result.getvalue()
+        try:
+            rows = result_cursor.fetchall()
+        finally:
+            result_cursor.close()
+
+        return [
+            {
+                "id": r[0],
+                "account_name": r[1],
+                "account_type": r[2],
+                "balance": float(r[3] or 0),
+                "card_number": r[4],
+                "expiry_date": r[5],
+                "color_theme": r[6],
+                "created_at": r[7],
+            }
+            for r in rows
+        ]
 
     except Exception as e:
         logger.error(f"[ERROR] get_user_accounts: {str(e)}")
@@ -36,10 +50,11 @@ def add_account(user_id: int, data):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        new_id = cursor.var(int)
 
-        cursor.execute(
-            "EXEC add_account_proc ?, ?, ?, ?, ?, ?, ?",
-            (
+        cursor.callproc(
+            "add_account_proc",
+            [
                 user_id,
                 data.account_name,
                 data.account_type,
@@ -47,13 +62,12 @@ def add_account(user_id: int, data):
                 data.card_number,
                 data.expiry_date,
                 data.color_theme,
-            )
+                new_id,
+            ]
         )
-        row = cursor.fetchone()
-        new_id = row[0] if row else None
 
         conn.commit()
-        return new_id
+        return new_id.getvalue()
 
     except Exception as e:
         logger.error(f"[ERROR] add_account: {str(e)}")
@@ -70,13 +84,14 @@ def delete_account(account_id: int, user_id: int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        rows_affected = cursor.var(int)
 
-        cursor.execute(
-            "EXEC delete_account_proc ?, ?",
-            (account_id, user_id)
+        cursor.callproc(
+            "delete_account_proc",
+            [account_id, user_id, rows_affected]
         )
         conn.commit()
-        return True
+        return (rows_affected.getvalue() or 0) > 0
 
     except Exception as e:
         logger.error(f"[ERROR] delete_account: {str(e)}")
@@ -93,10 +108,11 @@ def update_account(account_id: int, user_id: int, data):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        rows_affected = cursor.var(int)
 
-        cursor.execute(
-            "EXEC update_account_proc ?, ?, ?, ?, ?, ?, ?, ?",
-            (
+        cursor.callproc(
+            "update_account_proc",
+            [
                 account_id,
                 user_id,
                 data.account_name,
@@ -105,10 +121,10 @@ def update_account(account_id: int, user_id: int, data):
                 data.card_number,
                 data.expiry_date,
                 data.color_theme,
-            )
+                rows_affected,
+            ]
         )
-        row = cursor.fetchone()
-        success = (row[0] > 0) if row else False
+        success = (rows_affected.getvalue() or 0) > 0
 
         conn.commit()
         return success
@@ -119,4 +135,4 @@ def update_account(account_id: int, user_id: int, data):
     finally:
         if conn:
             cursor.close()
-            conn.close()
+            conn.close()

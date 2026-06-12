@@ -1,29 +1,28 @@
 # backend/app/services/transaction_service.py
 from app.config.db import get_db_connection
 from app.schemas.transaction import TransactionCreate
+import oracledb
 
 def create_transaction_in_db(user_id: int, tx: TransactionCreate):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        sql = """
-        DECLARE @status VARCHAR(50);
-        EXEC add_transaction_proc ?, ?, ?, ?, ?, ?, @status OUTPUT;
-        SELECT @status;
-        """
-        cursor.execute(sql, (
-            user_id,
-            tx.account_id,
-            tx.title,
-            tx.category,
-            tx.amount,
-            tx.transaction_type
-        ))
-        result = cursor.fetchone()
+        status_var = cursor.var(str)
+        cursor.callproc(
+            "add_transaction_proc",
+            [
+                user_id,
+                tx.account_id,
+                tx.title,
+                tx.category,
+                tx.amount,
+                tx.transaction_type,
+                status_var,
+            ]
+        )
         conn.commit()
         
-        status = result[0] if result else "FAILED"
-        return {"status": status}
+        return {"status": status_var.getvalue() or "FAILED"}
     except Exception as e:
         return {"status": "ERROR", "message": str(e)}
     finally:
@@ -34,8 +33,14 @@ def get_user_transactions_from_db(user_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("EXEC get_user_transactions_proc ?", (user_id,))
-        rows = cursor.fetchall()
+        result = cursor.var(oracledb.DB_TYPE_CURSOR)
+        cursor.callproc("get_user_transactions_proc", [user_id, result])
+
+        result_cursor = result.getvalue()
+        try:
+            rows = result_cursor.fetchall()
+        finally:
+            result_cursor.close()
         
         return [{
             "id": r[0],
