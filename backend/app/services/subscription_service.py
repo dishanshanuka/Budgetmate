@@ -1,5 +1,4 @@
 from app.config.db import get_db_connection
-import oracledb
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,25 +7,24 @@ logger = logging.getLogger(__name__)
 # --- 1. Get all subscriptions for a user ---
 def get_subscriptions(user_id: int):
     conn = None
+    cursor = None
+    result_cursor = None
     try:
         conn = get_db_connection()
+        if not conn:
+            return []
+
         cursor = conn.cursor()
-        result = cursor.var(oracledb.DB_TYPE_CURSOR)
-
-        cursor.callproc("get_subscriptions_proc", [user_id, result])
-
-        result_cursor = result.getvalue()
-        try:
-            rows = result_cursor.fetchall()
-        finally:
-            result_cursor.close()
+        result_cursor = conn.cursor()
+        cursor.callproc("get_subscriptions_proc", [user_id, result_cursor])
+        rows = result_cursor.fetchall()
 
         return [
             {
                 "id": r[0],
                 "name": r[1],
                 "amount": float(r[2] or 0),
-                "billing_type": r[3],
+                "billing_type": normalize_billing_type(r[3]),
                 "due_day": r[4],
                 "due_month": r[5],
                 "icon_url": r[6],
@@ -39,16 +37,23 @@ def get_subscriptions(user_id: int):
         logger.error(f"[ERROR] get_subscriptions: {str(e)}")
         return []
     finally:
-        if conn:
+        if result_cursor:
+            result_cursor.close()
+        if cursor:
             cursor.close()
+        if conn:
             conn.close()
 
 
 # --- 2. Add a subscription ---
 def add_subscription(user_id: int, data):
     conn = None
+    cursor = None
     try:
         conn = get_db_connection()
+        if not conn:
+            return None
+
         cursor = conn.cursor()
         new_id = cursor.var(int)
 
@@ -58,7 +63,7 @@ def add_subscription(user_id: int, data):
                 user_id,
                 data.name,
                 data.amount,
-                data.billing_type,
+                normalize_billing_type(data.billing_type),
                 data.due_day,
                 data.due_month,
                 data.icon_url,
@@ -74,16 +79,21 @@ def add_subscription(user_id: int, data):
         logger.error(f"[ERROR] add_subscription: {str(e)}")
         return None
     finally:
-        if conn:
+        if cursor:
             cursor.close()
+        if conn:
             conn.close()
 
 
 # --- 3. Update a subscription ---
 def update_subscription(subscription_id: int, user_id: int, data):
     conn = None
+    cursor = None
     try:
         conn = get_db_connection()
+        if not conn:
+            return False, "Database connection failed"
+
         cursor = conn.cursor()
         rows_affected = cursor.var(int)
 
@@ -94,7 +104,7 @@ def update_subscription(subscription_id: int, user_id: int, data):
                 user_id,
                 data.name,
                 data.amount,
-                data.billing_type,
+                normalize_billing_type(data.billing_type),
                 data.due_day,
                 data.due_month,
                 data.icon_url,
@@ -110,16 +120,21 @@ def update_subscription(subscription_id: int, user_id: int, data):
         logger.error(f"[ERROR] update_subscription: {str(e)}")
         return False, str(e)
     finally:
-        if conn:
+        if cursor:
             cursor.close()
+        if conn:
             conn.close()
 
 
 # --- 4. Delete a subscription ---
 def delete_subscription(subscription_id: int, user_id: int):
     conn = None
+    cursor = None
     try:
         conn = get_db_connection()
+        if not conn:
+            return False
+
         cursor = conn.cursor()
         rows_affected = cursor.var(int)
 
@@ -135,6 +150,16 @@ def delete_subscription(subscription_id: int, user_id: int):
         logger.error(f"[ERROR] delete_subscription: {str(e)}")
         return False
     finally:
-        if conn:
+        if cursor:
             cursor.close()
+        if conn:
             conn.close()
+
+
+def normalize_billing_type(value):
+    normalized = (value or "").strip().upper()
+    if normalized in {"MONTHLY", "MONTH"}:
+        return "Monthly"
+    if normalized in {"YEARLY", "ANNUAL", "YEAR"}:
+        return "Annual"
+    return value or "Monthly"
