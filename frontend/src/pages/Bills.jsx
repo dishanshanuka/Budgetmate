@@ -20,6 +20,23 @@ const optimizationTooltipLines = [
   'High monthly commitment — total monthly cost over $100 or 4+ monthly subscriptions.'
 ];
 
+const normalizeBillingType = (value) => {
+  const normalized = String(value || '').trim().toUpperCase();
+  if (normalized === 'MONTHLY' || normalized === 'MONTH') return 'Monthly';
+  if (normalized === 'YEARLY' || normalized === 'ANNUAL' || normalized === 'YEAR') return 'Annual';
+  return value || 'Monthly';
+};
+
+const normalizeSubscription = (sub) => ({
+  ...sub,
+  billing_type: normalizeBillingType(sub.billing_type),
+  amount: Number(sub.amount || 0),
+  due_day: Number(sub.due_day || 0),
+  due_month: sub.due_month === null || sub.due_month === undefined ? null : Number(sub.due_month),
+  icon_url: sub.icon_url || DEFAULT_ICON,
+  bg_color: sub.bg_color || 'bg-slate-50'
+});
+
 const Bills = () => {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today.getDate());
@@ -31,21 +48,24 @@ const Bills = () => {
 
   const [subscriptions, setSubscriptions] = useState([]);
 
-  const loadSubscriptions = async () => {
+  const loadSubscriptions = async (config = {}) => {
     try {
-      const response = await API.get('/subscriptions/');
-      setSubscriptions(response.data);
+      const response = await API.get('/subscriptions/', config);
+      setSubscriptions((response.data || []).map(normalizeSubscription));
     } catch (error) {
+      if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
       console.error('Failed to load subscriptions:', error);
     }
   };
 
   useEffect(() => {
+    const controller = new AbortController();
     const initializeSubscriptions = async () => {
-      await loadSubscriptions();
+      await loadSubscriptions({ signal: controller.signal });
     };
 
     void initializeSubscriptions();
+    return () => controller.abort();
   }, []);
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -173,7 +193,9 @@ const Bills = () => {
   const visibleSubs = useMemo(
     () => subscriptions.filter((sub) => {
       if (sub.billing_type === 'Monthly') return true;
-      if (sub.billing_type === 'Annual') return Number(sub.due_month) === currentMonthIndex;
+      if (sub.billing_type === 'Annual') {
+        return sub.due_month === null || Number(sub.due_month) === currentMonthIndex;
+      }
       return true;
     }),
     [subscriptions, currentMonthIndex]
@@ -300,7 +322,7 @@ const Bills = () => {
       });
 
       const response = await API.get('/subscriptions/');
-      setSubscriptions(response.data);
+      setSubscriptions((response.data || []).map(normalizeSubscription));
       setFormData({
         name: '',
         amount: '',
@@ -661,7 +683,7 @@ const Bills = () => {
                       <div className="flex-1">
                         <p className="font-bold text-slate-900">{sub.name}</p>
                         <p className="text-xs text-slate-500">{sub.billing_type} • ${sub.amount}</p>
-                        <p className="text-xs text-slate-400">Due {sub.billing_type === 'Annual' ? `${months[sub.due_month]} ${sub.due_day}` : `Day ${sub.due_day}`}</p>
+                        <p className="text-xs text-slate-400">Due {sub.billing_type === 'Annual' && sub.due_month !== null ? `${months[sub.due_month]} ${sub.due_day}` : `Day ${sub.due_day}`}</p>
                       </div>
                     </div>
                   </button>
