@@ -38,30 +38,16 @@ def create_transaction_in_db(user_id: int, tx: TransactionCreate):
 def get_user_transactions_from_db(user_id: int):
     conn = None
     cursor = None
+    result_cursor = None
     try:
         conn = get_db_connection()
         if not conn:
             return []
 
         cursor = conn.cursor()
-        cursor.execute(
-            """
-            SELECT
-                transaction_id AS id,
-                user_id,
-                account_id,
-                description AS title,
-                category,
-                amount,
-                type AS transaction_type,
-                transaction_date
-            FROM transactions
-            WHERE user_id = :user_id
-            ORDER BY transaction_date DESC, transaction_id DESC
-            """,
-            user_id=user_id,
-        )
-        rows = cursor.fetchall()
+        result_cursor = conn.cursor()
+        cursor.callproc("get_user_transactions_proc", [user_id, result_cursor])
+        rows = result_cursor.fetchall()
         
         return [{
             "id": r[0],
@@ -77,6 +63,8 @@ def get_user_transactions_from_db(user_id: int):
         print(f"Error fetching transactions: {e}")
         return []
     finally:
+        if result_cursor:
+            result_cursor.close()
         if cursor:
             cursor.close()
         if conn:

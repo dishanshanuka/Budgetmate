@@ -29,34 +29,16 @@ def get_budgets_from_db(user_id: int):
     """Fetch all budgets with current-month spent amounts for a user."""
     conn = None
     cursor = None
+    result_cursor = None
     try:
         conn = get_db_connection()
         if not conn:
             return []
 
         cursor = conn.cursor()
-        cursor.execute(
-            """
-            SELECT
-                b.ID,
-                b.CATEGORY,
-                b.MONTHLY_LIMIT,
-                NVL(SUM(t.AMOUNT), 0) AS spent,
-                b.CREATED_AT
-            FROM BUDGETS b
-            LEFT JOIN TRANSACTIONS t
-                ON t.USER_ID = b.USER_ID
-               AND t.CATEGORY = b.CATEGORY
-               AND t.TYPE = 'EXPENSE'
-               AND EXTRACT(MONTH FROM t.TRANSACTION_DATE) = EXTRACT(MONTH FROM CURRENT_DATE)
-               AND EXTRACT(YEAR FROM t.TRANSACTION_DATE) = EXTRACT(YEAR FROM CURRENT_DATE)
-            WHERE b.USER_ID = :user_id
-            GROUP BY b.ID, b.CATEGORY, b.MONTHLY_LIMIT, b.CREATED_AT
-            ORDER BY b.CREATED_AT
-            """,
-            user_id=user_id,
-        )
-        rows = cursor.fetchall()
+        result_cursor = conn.cursor()
+        cursor.callproc("get_budgets_with_spent_proc", [user_id, result_cursor])
+        rows = result_cursor.fetchall()
 
         return [
             {
@@ -72,6 +54,8 @@ def get_budgets_from_db(user_id: int):
         print(f"[BUDGET] get_budgets_from_db error: {e}")
         return []
     finally:
+        if result_cursor:
+            result_cursor.close()
         if cursor:
             cursor.close()
         if conn:
