@@ -14,6 +14,8 @@ from app.routes.transaction import router as transaction_router
 from app.routes import auth, account, subscription
 from app.routes.budget import router as budget_router
 from app.routes.settings import router as settings_router
+import uvicorn
+from app.routes.analytics import router as analytics_router
 from app.routes.investment import router as investment_router 
 
 app = FastAPI(title="BudgetMate API - Professional Mode")
@@ -43,6 +45,7 @@ app.add_middleware(
 
 # Registering our route modules
 app.include_router(auth.router, prefix="/auth")
+app.include_router(analytics_router, prefix="/analytics")
 
 app.include_router(transaction_router, prefix="/transactions")
 app.include_router(account.router, prefix="/accounts")
