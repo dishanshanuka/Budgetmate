@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-oracledb==2.1.2
+oracledb==4.0.0
 python-dotenv==1.0.1
 email-validator
 bcrypt

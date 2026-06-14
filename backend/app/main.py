@@ -1,19 +1,28 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware 
-from app.config.db import init_db
+import sys
+from pathlib import Path
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+
+backend_root = Path(__file__).resolve().parent.parent
+if str(backend_root) not in sys.path:
+    sys.path.insert(0, str(backend_root))
+
+from app.config.db import init_db
 from app.routes.transaction import router as transaction_router
-from app.routes import auth 
-from app.routes import auth, account , subscription
+from app.routes import auth, account, subscription
 from app.routes.budget import router as budget_router
 from app.routes.settings import router as settings_router
-import uvicorn
+from app.routes.investment import router as investment_router 
 
 app = FastAPI(title="BudgetMate API - Professional Mode")
 
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
 ]
 
 app.add_middleware(
@@ -32,6 +41,7 @@ app.include_router(account.router, prefix="/accounts")
 app.include_router(subscription.router, prefix="/subscriptions")
 app.include_router(budget_router, prefix="/budgets")  
 app.include_router(settings_router, prefix="/settings")
+app.include_router(investment_router, prefix="/investments")
 
 @app.on_event("startup")
 async def startup():

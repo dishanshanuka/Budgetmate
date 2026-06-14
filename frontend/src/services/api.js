@@ -1,16 +1,25 @@
 import axios from 'axios';
 
+// Create Axios instance
 const API = axios.create({
-    baseURL: 'http://127.0.0.1:8000', 
+    baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8001',
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
-// Request interceptor to automatically add the Bearer token to headers
+// ===============================
+// REQUEST INTERCEPTOR
+// Automatically attach JWT token
+// ===============================
 API.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
         return config;
     },
     (error) => {
@@ -18,19 +27,28 @@ API.interceptors.request.use(
     }
 );
 
-// Response interceptor to handle token expiry or invalidation (401 Unauthorized)
+// ===============================
+// RESPONSE INTERCEPTOR
+// Handle authentication errors
+// ===============================
 API.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     (error) => {
         if (error.response && error.response.status === 401) {
-            // Do not redirect/clear storage if the error is from the login request
+
+            // Prevent logout loop on login page
             const isLoginRequest = error.config?.url?.includes('/auth/login');
+
             if (!isLoginRequest) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('userName');
+
                 window.location.href = '/';
             }
         }
+
         return Promise.reject(error);
     }
 );
