@@ -3,7 +3,7 @@ import { Mail, Lock, X, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import toast from 'react-hot-toast';
-import logoImg from "../assets/logo.png";
+import logoImg from "../assets/logo.svg";
 
 const Login = ({ isOpen, onClose, openRegister, openForgot }) => {
   const [email, setEmail] = useState("");

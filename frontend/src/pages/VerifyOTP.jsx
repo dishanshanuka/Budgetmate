@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Lock, Hash, X, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import API from '../services/api';
 import toast from 'react-hot-toast';
-import logoImg from "../assets/logo.png";
+import logoImg from "../assets/logo.svg";
 
 const VerifyOTP = ({ isOpen, onClose, email, openLogin }) => {
   const [otp, setOtp] = useState("");

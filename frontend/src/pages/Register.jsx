@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Mail, User, X, Eye, EyeOff } from "lucide-react";
 import API from '../services/api';
 import toast from 'react-hot-toast';
-import logoImg from "../assets/logo.png";
+import logoImg from "../assets/logo.svg";
 
 const Register = ({ isOpen, onClose, openLogin }) => {
   const [name, setName] = useState('');
