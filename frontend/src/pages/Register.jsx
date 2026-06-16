@@ -49,7 +49,7 @@ const Register = ({ isOpen, onClose, openLogin }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
 
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 space-y-6 animate-in fade-in zoom-in duration-300">
+      <div className="relative w-full max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in duration-300">
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <X size={24} />
         </button>
@@ -76,7 +76,7 @@ const Register = ({ isOpen, onClose, openLogin }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] font-bold text-gray-400 uppercase">Password</label>
               <div className="flex items-center border-2 border-gray-50 rounded-xl px-3 py-2 mt-1 focus-within:border-blue-900">

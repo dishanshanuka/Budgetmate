@@ -38,7 +38,7 @@ const ForgotPassword = ({ isOpen, onClose, openLogin, openVerify }) => {
         onClick={onClose}
       ></div>
 
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 space-y-6 animate-in fade-in zoom-in duration-300 border border-white/20">
+      <div className="relative w-full max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto bg-white rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in duration-300 border border-white/20">
         {/* Close Button */}
         <button 
           onClick={onClose} 

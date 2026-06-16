@@ -110,26 +110,26 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout title="Overview">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-        <div className="lg:col-span-2 bg-[#0A1128] rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-10">
+        <div className="lg:col-span-2 bg-[#0A1128] rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white relative overflow-hidden shadow-2xl">
           <div className="relative z-10 space-y-6">
             <p className="text-blue-300 font-bold text-xs uppercase tracking-widest">Total Net Worth</p>
-            <h2 className="text-5xl font-black tracking-tight">{formatCurrency(totalNetWorth)}</h2>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight">{formatCurrency(totalNetWorth)}</h2>
             <div className="inline-flex items-center gap-2 bg-blue-500/20 px-3 py-1.5 rounded-full text-xs font-bold text-blue-200 border border-blue-500/30">
               <ArrowUpRight size={14} /> {formatCurrency(monthlyIncome)} income this month
             </div>
-            <div className="grid grid-cols-3 gap-4 pt-10 border-t border-white/10">
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-6 sm:pt-10 border-t border-white/10">
               <div>
                 <p className="text-blue-300 text-[10px] uppercase font-bold">Cash</p>
-                <p className="text-xl font-bold">{formatCompactCurrency(cashBalance)}</p>
+                <p className="text-base sm:text-xl font-bold">{formatCompactCurrency(cashBalance)}</p>
               </div>
               <div>
                 <p className="text-blue-300 text-[10px] uppercase font-bold">Investments</p>
-                <p className="text-xl font-bold">{formatCompactCurrency(investmentBalance)}</p>
+                <p className="text-base sm:text-xl font-bold">{formatCompactCurrency(investmentBalance)}</p>
               </div>
               <div>
                 <p className="text-blue-300 text-[10px] uppercase font-bold">Income</p>
-                <p className="text-xl font-bold">{formatCompactCurrency(monthlyIncome)}</p>
+                <p className="text-base sm:text-xl font-bold">{formatCompactCurrency(monthlyIncome)}</p>
               </div>
             </div>
           </div>
@@ -137,7 +137,7 @@ const Dashboard = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+          <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-2xl text-blue-600"><Wallet size={20} /></div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Monthly Spend</p>
@@ -146,7 +146,7 @@ const Dashboard = () => {
             <p className="text-xs font-bold text-slate-400 mt-2">Current month expenses</p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+          <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-2xl text-green-600"><Target size={20} /></div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Savings Rate</p>
@@ -157,9 +157,9 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
-          <div className="flex justify-between items-center mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 sm:mb-8">
             <h4 className="text-xl font-black text-slate-900 dark:text-white">Recent Transactions</h4>
             <div className="flex items-center gap-4">
               <button
@@ -203,7 +203,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="bg-blue-600 rounded-[2.5rem] p-10 text-white shadow-xl shadow-blue-100 dark:shadow-none">
+        <div className="bg-blue-600 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-blue-100 dark:shadow-none">
           <h4 className="text-xl font-bold mb-6">Investment Opportunity</h4>
           <p className="text-blue-100 text-sm leading-relaxed mb-8 font-medium">
             Based on your savings goals, we've identified an ETF that matches your risk profile.
@@ -216,7 +216,7 @@ const Dashboard = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-md p-8 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200 mx-4 sm:mx-0">
             <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6">New Transaction</h3>
 
             <form onSubmit={handleSubmit} className="space-y-5">

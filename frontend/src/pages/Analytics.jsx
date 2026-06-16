@@ -93,7 +93,7 @@ const Analytics = () => {
     <DashboardLayout title="Detailed Analytics">
 
       {/* ── Top Controls ────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-4 mb-8">
 
         {/* Time Range */}
         <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
@@ -161,7 +161,7 @@ const Analytics = () => {
       )}
 
       {/* ── Summary Cards ───────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <SummaryCard label="Total Income"   value={fmt(summary.total_income)}  icon={TrendingUp}   color="bg-green-500" />
         <SummaryCard label="Total Expenses" value={fmt(summary.total_expense)} icon={TrendingDown}  color="bg-red-500" />
         <SummaryCard label="Net Savings"    value={fmt(summary.net_savings)}   icon={Wallet}        color={savingsPositive ? 'bg-blue-600' : 'bg-orange-500'} />
@@ -170,8 +170,8 @@ const Analytics = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {/* ── Bar Chart: Income vs Expense ──────────────────────────────── */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
-          <div className="flex justify-between items-center mb-10">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-10">
             <h4 className="text-xl font-black text-slate-900 dark:text-white">Financial Overview</h4>
             <div className="flex gap-4">
               <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          <div className="h-[350px]">
+          <div className="h-[250px] sm:h-[350px]">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
@@ -218,7 +218,7 @@ const Analytics = () => {
         </div>
 
         {/* ── Pie Chart: Spending by Category ──────────────────────────── */}
-        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+        <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
           <h4 className="text-xl font-black text-slate-900 dark:text-white mb-8">Spending by Category</h4>
 
           {isLoading ? (
@@ -278,7 +278,7 @@ const Analytics = () => {
         </div>
 
         {/* ── Line Chart: Savings Trajectory ───────────────────────────── */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
           <div className="flex justify-between items-center mb-8">
             <h4 className="text-xl font-black text-slate-900 dark:text-white">Income Trend</h4>
             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
@@ -318,7 +318,7 @@ const Analytics = () => {
         </div>
 
         {/* ── AI Insight Card ───────────────────────────────────────────── */}
-        <div className="bg-gradient-to-br from-[#0A1128] to-blue-900 dark:from-slate-900 dark:to-blue-950 rounded-[2.5rem] p-10 text-white shadow-xl flex flex-col justify-between group overflow-hidden relative border border-transparent dark:border-slate-800">
+        <div className="bg-gradient-to-br from-[#0A1128] to-blue-900 dark:from-slate-900 dark:to-blue-950 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl flex flex-col justify-between group overflow-hidden relative border border-transparent dark:border-slate-800">
           <div className="absolute top-[-20px] right-[-20px] opacity-10 group-hover:scale-150 transition-transform duration-700">
             <Sparkles size={150} />
           </div>

@@ -208,7 +208,7 @@ const Home = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans overflow-x-hidden selection:bg-blue-100 transition-colors duration-300">
+    <div className="relative min-h-screen bg-[#F8FAFF] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans overflow-x-hidden selection:bg-blue-100 transition-colors duration-300">
 
       {/* ── Global animation keyframes ── */}
       <style>{`
@@ -266,23 +266,23 @@ const Home = () => {
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[35rem] h-[35rem] bg-blue-200/20 rounded-full blur-3xl -z-10" style={{ animation: 'orbPulse 8s ease-in-out infinite' }}></div>
       <div className="absolute top-[25%] right-[-10%] w-[30rem] h-[30rem] bg-indigo-100/30 rounded-full blur-3xl -z-10" style={{ animation: 'orbPulse 12s ease-in-out infinite 2s' }}></div>
-      <div className="absolute bottom-[-5%] left-[-5%] w-[32rem] h-[32rem] bg-blue-150/10 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-[-5%] w-[32rem] h-[32rem] bg-blue-150/10 rounded-full blur-3xl -z-10"></div>
 
       {/* ── NAVBAR ── */}
       <header
-        className="fixed top-6 left-0 w-full z-50 px-6"
+        className="fixed top-4 sm:top-6 left-0 right-0 z-50 px-2 sm:px-6"
         style={{ transition: 'top 0.35s ease' }}
       >
         <div
-          className={`max-w-6xl mx-auto backdrop-blur-lg border px-8 flex justify-between items-center shadow-lg shadow-blue-500/5 rounded-full transition-all duration-300 ${
+          className={`max-w-6xl mx-auto backdrop-blur-lg border px-3 sm:px-8 flex justify-between items-center shadow-lg shadow-blue-500/5 rounded-full transition-all duration-300 ${
             scrolled
               ? 'bg-white/90 dark:bg-slate-900/90 border-white/60 dark:border-slate-800 py-2 shadow-xl shadow-blue-500/10 dark:shadow-none'
               : 'bg-white/70 dark:bg-slate-900/70 border-white/40 dark:border-slate-800/50 py-3'
           }`}
         >
-          <div className="flex items-center">
-            <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white flex items-center gap-1.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <span className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-base shadow-md shadow-blue-500/35">B</span>
+          <div className="flex items-center flex-shrink-0">
+            <span className="text-base sm:text-xl font-black tracking-tighter text-slate-900 dark:text-white flex items-center gap-1 sm:gap-1.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <span className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center text-white font-black text-sm sm:text-base shadow-md shadow-blue-500/35">B</span>
               Budget<span className="text-blue-600">Mate</span>
             </span>
           </div>
@@ -304,27 +304,27 @@ const Home = () => {
             )}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             {isLoggedIn ? (
-              <div className="flex items-center gap-4 border-l pl-4 border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-2 sm:gap-4 border-l pl-2 sm:pl-4 border-slate-200 dark:border-slate-800">
                 <div className="text-right hidden sm:block">
                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1 text-nowrap">Welcome back</p>
                   <p className="text-xs font-bold text-slate-900 dark:text-white capitalize">{userName}</p>
                 </div>
                 <button title="Dashboard" onClick={() => window.location.href='/dashboard'}
-                  className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 hover:scale-105 transition-all shadow-md active:scale-95 cursor-pointer overflow-hidden">
-                  {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : <User size={18} />}
+                  className="w-8 h-8 sm:w-9 sm:h-9 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 hover:scale-105 transition-all shadow-md active:scale-95 cursor-pointer overflow-hidden">
+                  {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : <User size={16} />}
                 </button>
-                <button onClick={handleLogout} title="Logout" className="p-2 text-slate-400 hover:text-red-500 transition-colors cursor-pointer">
-                  <LogOut size={18} />
+                <button onClick={handleLogout} title="Logout" className="p-1.5 sm:p-2 text-slate-400 hover:text-red-500 transition-colors cursor-pointer">
+                  <LogOut size={16} />
                 </button>
               </div>
             ) : (
               <>
-                <button onClick={() => setIsLoginOpen(true)} className="text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Log in</button>
+                <button onClick={() => setIsLoginOpen(true)} className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">Log in</button>
                 <button onClick={() => setIsRegisterOpen(true)}
-                  className="bg-blue-600 text-white px-5 py-2.5 rounded-full font-bold text-xs flex items-center gap-2 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-105 transition-all active:scale-95 shadow-md cursor-pointer">
-                  Try Now <MoveRight size={14} />
+                  className="bg-blue-600 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1.5 sm:gap-2 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-105 transition-all active:scale-95 shadow-md cursor-pointer">
+                  Try Now <MoveRight size={12} className="hidden sm:block" />
                 </button>
               </>
             )}
@@ -333,8 +333,8 @@ const Home = () => {
       </header>
 
       {/* ── HERO SECTION ── */}
-      <section className="pt-44 pb-20 px-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-7 space-y-8 text-left">
+      <section className="pt-32 sm:pt-44 pb-12 sm:pb-20 px-4 sm:px-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-left">
 
           {/* Badge */}
           <div style={heroTransition(0)}>
@@ -346,7 +346,7 @@ const Home = () => {
 
           {/* Headline */}
           <div style={heroTransition(120)}>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.05]">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.05]">
               Take Control of Your Money.<br />
               Track. Save. Grow.<br />
               <span className="text-blue-600">All in One Place.</span>
@@ -355,7 +355,7 @@ const Home = () => {
 
           {/* Subtitle */}
           <div style={heroTransition(240)}>
-            <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
+            <p className="text-sm sm:text-base md:text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
               Unlock the full potential of your wealth with a single, AI-powered platform designed to optimize your savings, investments, and expenses without stress.
             </p>
           </div>
@@ -365,13 +365,13 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <button
                 onClick={isLoggedIn ? () => window.location.href='/dashboard' : () => setIsRegisterOpen(true)}
-                className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-base shadow-xl shadow-blue-500/25 hover:bg-blue-700 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/35 transition-all flex items-center justify-center gap-3 group cursor-pointer active:scale-95"
+                className="bg-blue-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-bold text-sm sm:text-base shadow-xl shadow-blue-500/25 hover:bg-blue-700 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/35 transition-all flex items-center justify-center gap-3 group cursor-pointer active:scale-95"
               >
                 {isLoggedIn ? `Go to Dashboard` : "Get Started Free"}
                 <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform" />
               </button>
               <a href="#showcase"
-                className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-8 py-4 rounded-2xl font-bold text-base hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-bold text-sm sm:text-base hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm">
                 Explore Features
               </a>
             </div>
@@ -401,7 +401,7 @@ const Home = () => {
           className="lg:col-span-5 relative w-full flex justify-center"
           style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? 'none' : 'translateX(32px) scale(0.96)', transition: 'opacity 0.85s ease 200ms, transform 0.85s ease 200ms' }}
         >
-          <div className="relative w-full max-w-md bg-[#0A1128] rounded-[2.5rem] p-8 text-white shadow-2xl overflow-visible border border-white/10 group hover:shadow-blue-900/30 transition-shadow duration-500">
+          <div className="relative w-full max-w-sm sm:max-w-md bg-[#0A1128] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-2xl overflow-hidden border border-white/10 group hover:shadow-blue-900/30 transition-shadow duration-500">
             <div className="absolute -right-20 -top-20 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute -left-20 -bottom-20 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -418,7 +418,7 @@ const Home = () => {
             <div className="space-y-2 mb-6">
               <p className="text-blue-300 text-[10px] uppercase font-bold tracking-widest">Total Net Worth</p>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black tracking-tight balance-shimmer">$48,250.00</span>
+                <span className="text-2xl sm:text-3xl font-black tracking-tight balance-shimmer">$48,250.00</span>
                 <span className="text-[10px] font-bold text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
                   <ArrowUpRight size={10} /> 12.4%
                 </span>
@@ -437,7 +437,7 @@ const Home = () => {
             </div>
 
             {/* Floating widget: Monthly Spend — float animation */}
-            <div className="absolute right-[-1.5rem] bottom-16 bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-4 rounded-2xl shadow-xl shadow-blue-950/20 dark:shadow-none border border-slate-100 dark:border-slate-800 max-w-[170px] animate-float-alt hover:scale-105 transition-transform duration-300">
+            <div className="absolute right-[-1.5rem] bottom-16 bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-4 rounded-2xl shadow-xl shadow-blue-950/20 dark:shadow-none border border-slate-100 dark:border-slate-800 max-w-[170px] animate-float-alt hover:scale-105 transition-transform duration-300 hidden sm:block">
               <div className="flex items-center justify-between gap-4 mb-2">
                 <div className="p-1.5 bg-blue-50 dark:bg-blue-950/20 text-blue-600 rounded-lg"><Wallet size={14} /></div>
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Monthly Limit</span>
@@ -449,7 +449,7 @@ const Home = () => {
             </div>
 
             {/* Floating widget: Transaction — opposite float */}
-            <div className="absolute left-[-1.5rem] top-28 bg-white dark:bg-slate-900 text-slate-900 dark:text-white py-3 px-4 rounded-2xl shadow-xl shadow-blue-950/20 dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-3 max-w-[190px] animate-float hover:scale-105 transition-transform duration-300">
+            <div className="absolute left-[-1.5rem] top-28 bg-white dark:bg-slate-900 text-slate-900 dark:text-white py-3 px-4 rounded-2xl shadow-xl shadow-blue-950/20 dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-3 max-w-[190px] animate-float hover:scale-105 transition-transform duration-300 hidden sm:flex">
               <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-500 flex items-center justify-center font-bold text-xs"><Activity size={14} /></div>
               <div>
                 <p className="text-xs font-bold text-slate-850 dark:text-slate-200">Starbucks Coffee</p>
@@ -462,8 +462,8 @@ const Home = () => {
       </section>
 
       {/* ── STATISTICS ── */}
-      <section className="bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800 py-12 px-6">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800 py-8 sm:py-12 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
           {[
             { value: '4.2', suffix: 'B+', label: 'Transactions Tracked' },
             { value: '150', suffix: 'K+', label: 'Active Users' },
@@ -483,7 +483,7 @@ const Home = () => {
       </section>
 
       {/* ── FEATURES GRID ── */}
-      <section id="features" className="py-24 px-6 max-w-6xl mx-auto text-center space-y-16">
+      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 max-w-6xl mx-auto text-center space-y-12 sm:space-y-16">
         <FadeIn direction="up">
           <div className="space-y-4 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950/20 text-blue-600 px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Features</div>
@@ -492,7 +492,7 @@ const Home = () => {
           </div>
         </FadeIn>
 
-        <StaggerParent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" stagger={120}>
+        <StaggerParent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8" stagger={120}>
           {[
             { icon: <Wallet size={22} />, title: 'Wallet Management', desc: 'Organize cash, credit cards, and bank assets side-by-side with localized currencies.' },
             { icon: <TrendingUp size={22} />, title: 'Investment Tracker', desc: 'Keep real-time records of stocks, index funds, and crypto portfolios all aligned with goals.' },
@@ -518,8 +518,8 @@ const Home = () => {
       </section>
 
       {/* ── INTERACTIVE SHOWCASE ── */}
-      <section id="showcase" className="py-24 px-6 bg-slate-50/50 dark:bg-slate-950/10 border-y border-slate-100 dark:border-slate-800">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section id="showcase" className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50/50 dark:bg-slate-950/10 border-y border-slate-100 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
           <FadeIn className="lg:col-span-5" direction="right">
             <div className="space-y-8 text-left">
@@ -539,7 +539,7 @@ const Home = () => {
                   <button
                     key={key}
                     onClick={() => handleTabChange(key)}
-                    className={`w-full py-4 px-6 rounded-2xl text-left font-black text-sm transition-all duration-200 cursor-pointer flex items-center justify-between border ${
+                    className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-2xl text-left font-black text-xs sm:text-sm transition-all duration-200 cursor-pointer flex items-center justify-between border ${
                       activeTab === key
                         ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/25 border-transparent scale-[1.02]'
                         : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200/50 dark:border-slate-800 hover:translate-x-1'
@@ -555,13 +555,13 @@ const Home = () => {
 
           {/* Tab Content Panel */}
           <FadeIn className="lg:col-span-7" direction="left" delay={120}>
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-xl dark:shadow-none overflow-hidden min-h-[360px] p-8 flex flex-col justify-between relative transition-all duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-xl dark:shadow-none overflow-hidden min-h-[300px] sm:min-h-[360px] p-5 sm:p-8 flex flex-col justify-between relative transition-all duration-300">
               <div key={tabKey} className="tab-content-enter space-y-6">
 
                 {activeTab === 'wallet' && (
                   <>
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-black text-xl text-slate-900 dark:text-white">Your Wallets</h4>
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                      <h4 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white">Your Wallets</h4>
                       <span className="text-[10px] font-bold bg-blue-50 dark:bg-blue-950/25 text-blue-600 px-2.5 py-1 rounded-full">3 Accounts Connected</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -584,8 +584,8 @@ const Home = () => {
 
                 {activeTab === 'analytics' && (
                   <>
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-black text-xl text-slate-900 dark:text-white">Monthly Spending Analytics</h4>
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                      <h4 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white">Monthly Spending Analytics</h4>
                       <span className="text-[10px] font-bold text-red-500 bg-red-50 dark:bg-red-950/20 px-2.5 py-1 rounded-full flex items-center gap-1"><Activity size={10} /> Live</span>
                     </div>
                     <div className="space-y-4">
@@ -610,8 +610,8 @@ const Home = () => {
 
                 {activeTab === 'investments' && (
                   <>
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-black text-xl text-slate-900 dark:text-white">Portfolio Performance</h4>
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                      <h4 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white">Portfolio Performance</h4>
                       <span className="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-950/20 px-2.5 py-1 rounded-full">+18.4% Return</span>
                     </div>
                     <div className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -637,8 +637,8 @@ const Home = () => {
 
                 {activeTab === 'bills' && (
                   <>
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-black text-xl text-slate-900 dark:text-white">Upcoming Bills</h4>
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                      <h4 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white">Upcoming Bills</h4>
                       <span className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/20 px-2.5 py-1 rounded-full">Calendar Integration</span>
                     </div>
                     <div className="space-y-3">
@@ -675,7 +675,7 @@ const Home = () => {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="py-24 px-6 max-w-6xl mx-auto text-center space-y-16">
+      <section id="how-it-works" className="py-16 sm:py-24 px-4 sm:px-6 max-w-6xl mx-auto text-center space-y-12 sm:space-y-16">
         <FadeIn direction="up">
           <div className="space-y-4 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950/20 text-blue-600 px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Getting Started</div>
@@ -703,7 +703,7 @@ const Home = () => {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="py-24 px-6 bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-6xl mx-auto text-center space-y-16">
           <FadeIn direction="up">
             <div className="space-y-4 max-w-2xl mx-auto">
@@ -738,7 +738,7 @@ const Home = () => {
       </section>
 
       {/* ── FAQ ── */}
-      <section id="faqs" className="py-24 px-6 max-w-4xl mx-auto space-y-16">
+      <section id="faqs" className="py-16 sm:py-24 px-4 sm:px-6 max-w-4xl mx-auto space-y-12 sm:space-y-16">
         <FadeIn direction="up">
           <div className="space-y-4 text-center">
             <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950/20 text-blue-600 px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">FAQ</div>
@@ -782,7 +782,7 @@ const Home = () => {
       {/* ── DARK CTA BANNER ── */}
       <FadeIn direction="up">
         <section className="mx-6 my-12 max-w-6xl lg:mx-auto">
-          <div className="bg-[#0A1128] text-white rounded-[2.5rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl border border-white/5 group hover:shadow-blue-950/40 transition-shadow duration-500">
+          <div className="bg-[#0A1128] text-white rounded-[1.5rem] sm:rounded-[2.5rem] p-8 sm:p-12 md:p-20 text-center relative overflow-hidden shadow-2xl border border-white/5 group hover:shadow-blue-950/40 transition-shadow duration-500">
             <div className="absolute top-0 right-0 w-[24rem] h-[24rem] bg-blue-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-600/15 transition-colors duration-700"></div>
             <div className="absolute bottom-0 left-0 w-[24rem] h-[24rem] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
             <div className="relative z-10 max-w-2xl mx-auto space-y-8">
@@ -804,8 +804,8 @@ const Home = () => {
 
       {/* ── FOOTER ── */}
       <footer className="bg-slate-900 text-white pt-16 pb-12 px-6 mt-20 border-t border-slate-800">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-800">
-          <div className="md:col-span-5 space-y-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-12 gap-8 sm:gap-12 pb-12 border-b border-slate-800">
+          <div className="col-span-2 md:col-span-5 space-y-6">
             <span className="text-2xl font-black tracking-tighter flex items-center gap-1.5">
               <span className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-base">B</span>
               Budget<span className="text-blue-500">Mate</span>
@@ -832,7 +832,7 @@ const Home = () => {
               <li><span className="hover:text-blue-400 cursor-pointer transition-colors">Knowledge Center</span></li>
             </ul>
           </div>
-          <div className="md:col-span-3 space-y-4 text-left">
+          <div className="col-span-2 md:col-span-3 space-y-4 text-left">
             <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Newsletter</p>
             <p className="text-slate-400 text-xs leading-relaxed font-medium">Receive smart savings ideas directly in your inbox monthly. No spam.</p>
             <div className="flex bg-slate-800 border border-slate-700/80 rounded-xl p-1 items-center">

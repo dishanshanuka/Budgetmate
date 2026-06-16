@@ -158,14 +158,14 @@ const Investments = () => {
 
   return (
     <DashboardLayout title="Investments">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
 
         {/* ── Left Side: Chart and Asset List ────────────────────────────────── */}
         <div className="lg:col-span-2 space-y-10">
 
           {/* Chart Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
-            <div className="flex justify-between items-center">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-8 border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h2 className="text-xl font-black text-slate-900 dark:text-white">Portfolio Performance</h2>
                 <p className="text-xs text-slate-400 dark:text-slate-505 font-bold mt-0.5 uppercase tracking-wider">Historical net asset growth</p>
@@ -190,7 +190,7 @@ const Investments = () => {
             </div>
 
             {/* LINE CHART */}
-            <div className="h-80 relative flex items-center justify-center">
+            <div className="h-56 sm:h-80 relative flex items-center justify-center">
               {chartLoading ? (
                 <Loader2 className="animate-spin text-slate-300" size={32} />
               ) : chartData.length > 0 ? (
@@ -229,8 +229,8 @@ const Investments = () => {
           </div>
 
           {/* Active Assets Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
-            <div className="flex justify-between items-center mb-8">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 sm:mb-8">
               <div>
                 <h3 className="text-xl font-black text-slate-900 dark:text-white">Portfolio Assets</h3>
                 <p className="text-xs text-slate-400 dark:text-slate-505 font-bold mt-0.5 uppercase tracking-wider">All linked active allocations</p>
@@ -271,7 +271,7 @@ const Investments = () => {
                 {assets.map((asset) => (
                   <div
                     key={asset.id}
-                    className="flex items-center justify-between p-6 rounded-[2rem] border border-slate-50 dark:border-slate-850 hover:border-slate-200 dark:hover:border-slate-700 bg-white dark:bg-slate-900 hover:shadow-lg hover:shadow-slate-100/30 transition-all group"
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-50 dark:border-slate-850 hover:border-slate-200 dark:hover:border-slate-700 bg-white dark:bg-slate-900 hover:shadow-lg hover:shadow-slate-100/30 transition-all group"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center shadow-md shadow-blue-100/10 dark:shadow-none group-hover:rotate-6 transition-transform">
@@ -328,9 +328,9 @@ const Investments = () => {
         <div className="space-y-8">
           
           {/* Net Worth Summary */}
-          <div className="bg-[#0A1128] rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-[#0A1128] rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl relative overflow-hidden">
             <p className="text-blue-300 font-bold text-[10px] uppercase tracking-[0.2em] mb-2">Total Investments</p>
-            <h4 className="text-4xl font-black mb-8 tracking-tighter">
+            <h4 className="text-2xl sm:text-4xl font-black mb-6 sm:mb-8 tracking-tighter">
               ${totalPortfolioValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h4>
             <div className="space-y-4 relative z-10">
@@ -349,7 +349,7 @@ const Investments = () => {
           </div>
 
           {/* Allocation Tip Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm text-center relative overflow-hidden group">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm text-center relative overflow-hidden group">
             <div className="w-20 h-20 bg-blue-50 dark:bg-blue-950/30 rounded-[2rem] flex items-center justify-center mx-auto mb-6 group-hover:rotate-12 transition-transform">
               <ArrowUpRight className="text-blue-600 dark:text-blue-400" size={32} />
             </div>
@@ -370,7 +370,7 @@ const Investments = () => {
       {/* -- Add / Edit Modal -------------------------------------------------- */}
       {modalMode && (
         <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[3rem] p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[1.5rem] sm:rounded-[3rem] p-5 sm:p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative max-h-[90vh] overflow-y-auto mx-2 sm:mx-0">
             <button onClick={closeModal} className="absolute top-8 right-8 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
               <X size={24} />
             </button>

@@ -343,16 +343,16 @@ const Bills = () => {
 
   return (
     <DashboardLayout title="Bills & Subscriptions">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
         
         {/*  Left Side: Calendar / List View Container */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
             
             {/*  Header with Navigation & Switcher */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 mb-6 sm:mb-10">
               <div className="flex items-center gap-4">
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white min-w-[180px]">
+                <h3 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white min-w-[140px] sm:min-w-[180px]">
                   {months[currentMonthIndex]} {currentYear}
                 </h3>
                 <div className="flex gap-2">
@@ -379,14 +379,14 @@ const Bills = () => {
             </div>
 
             {viewMode === 'month' ? (
-              <div className="grid grid-cols-7 gap-px bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-[2rem] overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+              <div className="grid grid-cols-7 gap-px bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl sm:rounded-[2rem] overflow-hidden animate-in fade-in zoom-in-95 duration-300">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                  <div key={day} className="bg-slate-50 dark:bg-slate-850 py-4 text-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{day}</div>
+                  <div key={day} className="bg-slate-50 dark:bg-slate-850 py-2 sm:py-4 text-center text-[8px] sm:text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{day}</div>
                 ))}
 
                 {/*: Leading empty cells to align day 1 to the correct weekday */}
                 {Array.from({ length: startDayOffset }).map((_, i) => (
-                  <div key={`empty-${i}`} className="bg-white dark:bg-slate-900 h-24" />
+                  <div key={`empty-${i}`} className="bg-white dark:bg-slate-900 h-14 sm:h-24" />
                 ))}
 
                 {calendarDays.map(day => {
@@ -395,13 +395,13 @@ const Bills = () => {
                     <div 
                       key={day} 
                       onClick={() => setSelectedDate(day)}
-                      className={`bg-white dark:bg-slate-900 h-24 p-3 relative hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-all cursor-pointer ${selectedDate === day ? 'bg-blue-50/40 dark:bg-blue-955/20' : ''}`}
+                      className={`bg-white dark:bg-slate-900 h-14 sm:h-24 p-1.5 sm:p-3 relative hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-all cursor-pointer ${selectedDate === day ? 'bg-blue-50/40 dark:bg-blue-955/20' : ''}`}
                     >
-                      <span className={`text-xs font-bold ${selectedDate === day ? 'bg-blue-600 text-white w-7 h-7 flex items-center justify-center rounded-full shadow-lg shadow-blue-900/30' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`text-[10px] sm:text-xs font-bold ${selectedDate === day ? 'bg-blue-600 text-white w-5 h-5 sm:w-7 sm:h-7 flex items-center justify-center rounded-full shadow-lg shadow-blue-900/30' : 'text-slate-400 dark:text-slate-500'}`}>
                         {day}
                       </span>
                       {hasBill && (
-                        <div className="mt-3 h-1.5 w-full bg-blue-500 rounded-full shadow-sm animate-pulse"></div>
+                        <div className="mt-1 sm:mt-3 h-1 sm:h-1.5 w-full bg-blue-500 rounded-full shadow-sm animate-pulse"></div>
                       )}
                     </div>
                   );
@@ -414,7 +414,7 @@ const Bills = () => {
                 )}
                 {visibleSubs.map((sub, i) => {
                   return (
-                  <div key={i} className="flex items-center justify-between p-6 bg-slate-50 dark:bg-slate-850 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-white dark:hover:bg-slate-900 transition-all group">
+                  <div key={i} className="flex items-center justify-between p-4 sm:p-6 bg-slate-50 dark:bg-slate-850 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-white dark:hover:bg-slate-900 transition-all group">
                     <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 ${sub.bg_color} dark:bg-slate-800 rounded-2xl flex items-center justify-center`}>
                         <img src={sub.icon_url || DEFAULT_ICON} className="w-7 h-7 object-contain" alt="" />
@@ -436,16 +436,16 @@ const Bills = () => {
           </div>
 
           {/* AI Card */}
-          <div className="bg-[#0A1128] rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group">
+          <div className="bg-[#0A1128] rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 text-white shadow-2xl relative overflow-hidden group">
              <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-125 transition-transform duration-1000"><Sparkles size={150} /></div>
-             <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+             <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-10 relative z-10">
                 <div className="w-20 h-20 bg-white/10 rounded-[2rem] flex items-center justify-center backdrop-blur-xl border border-white/20"><Sparkles size={36} className="text-blue-300 animate-bounce" /></div>
                 <div className="flex-1 text-center md:text-left">
                    <h4 className="text-2xl font-black mb-2">Smart Cancellation</h4>
                    <p className="text-blue-200/80 text-sm">Save more in <b>{months[currentMonthIndex]}</b> by removing unused subscriptions.</p>
                 </div>
                 <button
-                  className="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-xs font-black shadow-lg active:scale-95 transition-all uppercase tracking-widest"
+                  className="px-8 sm:px-10 py-4 sm:py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-xs font-black shadow-lg active:scale-95 transition-all uppercase tracking-widest w-full sm:w-auto text-center"
                   onClick={() => setShowOptimizeModal(true)}
                 >
                   Optimize
@@ -456,8 +456,8 @@ const Bills = () => {
 
         {/*  Right Side: Summary & Details */}
         <div className="space-y-8">
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
-             <div className="flex justify-between items-center mb-10">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+             <div className="flex justify-between items-center mb-6 sm:mb-10">
                 <h4 className="text-xl font-black text-slate-900 dark:text-white">Active Subs</h4>
                 <button
                   onClick={() => {
@@ -474,11 +474,11 @@ const Bills = () => {
                 {subscriptions.map((sub, i) => (
                   <div key={i} className={`flex items-center justify-between group cursor-pointer p-1 rounded-2xl transition-all ${selectedDate === Number(sub.due_day) ? 'bg-blue-50/50 dark:bg-blue-950/20' : ''}`}>
                     <div className="flex items-center gap-4">
-                       <div className={`w-14 h-14 ${sub.bg_color} dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-50 dark:border-slate-800 shadow-sm transition-transform group-hover:scale-110`}>
-                          <img src={sub.icon_url || DEFAULT_ICON} alt={sub.name} className="w-8 h-8 object-contain" />
+                       <div className={`w-10 h-10 sm:w-14 sm:h-14 ${sub.bg_color} dark:bg-slate-800 rounded-xl sm:rounded-2xl flex items-center justify-center border border-slate-50 dark:border-slate-800 shadow-sm transition-transform group-hover:scale-110`}>
+                          <img src={sub.icon_url || DEFAULT_ICON} alt={sub.name} className="w-5 h-5 sm:w-8 sm:h-8 object-contain" />
                        </div>
                        <div>
-                          <p className="font-bold text-slate-900 dark:text-white text-[15px]">{sub.name}</p>
+                          <p className="font-bold text-slate-900 dark:text-white text-xs sm:text-[15px]">{sub.name}</p>
                           <p className={`text-[10px] font-black uppercase mt-0.5 ${selectedDate === Number(sub.due_day) ? 'text-blue-600 dark:text-blue-400 animate-pulse' : 'text-slate-400 dark:text-slate-500'}`}>
                              {selectedDate === Number(sub.due_day) ? "Due Today" : `Day ${sub.due_day}`}
                           </p>
@@ -490,14 +490,14 @@ const Bills = () => {
                   </div>
                 ))}
              </div>
-             <button onClick={openManageBilling} className="w-full mt-10 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-750 transition-all">Manage Billing</button>
+             <button onClick={openManageBilling} className="w-full mt-6 sm:mt-10 py-3 sm:py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-750 transition-all">Manage Billing</button>
           </div>
 
           {/*  Summary Total Card */}
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-10 text-white shadow-xl relative overflow-hidden">
+          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
              <div className="relative z-10">
                 <p className="text-blue-100 font-bold text-[10px] uppercase tracking-widest mb-3">Monthly Commitments</p>
-                <h4 className="text-4xl font-black mb-8">${totalMonthly}</h4>
+                <h4 className="text-2xl sm:text-4xl font-black mb-6 sm:mb-8">${totalMonthly}</h4>
                 <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl">
                    <div className="w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
                    <span className="text-[11px] font-bold text-white/90 uppercase tracking-wider italic">Payments Active</span>
@@ -509,8 +509,8 @@ const Bills = () => {
 
       </div>
       {showAddModal && (
-      <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 p-6 rounded-3xl w-full max-w-md shadow-2xl">
+      <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 p-5 sm:p-6 rounded-[1.5rem] sm:rounded-3xl w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto">
           <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">Add Subscription</h3>
 
           <form onSubmit={handleAddSubscription} className="space-y-4">
@@ -645,8 +645,8 @@ const Bills = () => {
       </div>
     )}
     {showManageModal && (
-      <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-8">
-        <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-3xl w-full max-w-6xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm flex items-center justify-center z-50 px-2 sm:px-4 py-4 sm:py-8">
+        <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[1.5rem] sm:rounded-3xl w-full max-w-6xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] overflow-y-auto">
           <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
             <div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">Manage Billing</h3>
@@ -660,7 +660,7 @@ const Bills = () => {
               Close
             </button>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-4 sm:gap-6 p-4 sm:p-6">
             <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-2">
               {subscriptions.length === 0 ? (
                 <div className="rounded-3xl bg-slate-50 dark:bg-slate-850 p-6 text-center text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-800">
@@ -781,8 +781,8 @@ const Bills = () => {
       </div>
     )}
     {showOptimizeModal && (
-      <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-8">
-        <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-3xl w-full max-w-5xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm flex items-center justify-center z-50 px-2 sm:px-4 py-4 sm:py-8">
+        <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[1.5rem] sm:rounded-3xl w-full max-w-5xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] overflow-y-auto">
           <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
             <div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">Smart Cancellation</h3>

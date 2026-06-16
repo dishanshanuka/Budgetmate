@@ -197,9 +197,9 @@ const Expenses = () => {
     <DashboardLayout title="Budget Management" notifications={notifications}>
 
       {/* -- Alert Banner -- */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-10">
         {overspentCategory ? (
-          <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-6 rounded-[2rem] flex gap-4 items-start animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] flex gap-3 sm:gap-4 items-start animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="p-3 bg-red-100 dark:bg-red-900/35 text-red-600 dark:text-red-400 rounded-2xl"><AlertCircle size={24} /></div>
             <div>
               <h4 className="font-black text-red-900 dark:text-red-200 text-sm mb-1">Overspending Alert</h4>
@@ -212,7 +212,7 @@ const Expenses = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 p-6 rounded-[2rem] flex gap-4 items-start animate-in fade-in duration-500">
+          <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] flex gap-3 sm:gap-4 items-start animate-in fade-in duration-500">
             <div className="p-3 bg-emerald-100 dark:bg-emerald-900/35 text-emerald-600 dark:text-emerald-400 rounded-2xl"><AlertCircle size={24} /></div>
             <div>
               <h4 className="font-black text-emerald-900 dark:text-emerald-200 text-sm mb-1">Budget on Track</h4>
@@ -223,7 +223,7 @@ const Expenses = () => {
           </div>
         )}
 
-        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-6 rounded-[2rem] flex gap-4 items-start">
+        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] flex gap-3 sm:gap-4 items-start">
           <div className="p-3 bg-blue-100 dark:bg-blue-900/35 text-blue-600 dark:text-blue-400 rounded-2xl"><Lightbulb size={24} /></div>
           <div>
             <h4 className="font-black text-blue-900 dark:text-blue-200 text-sm mb-1">Smart Tip</h4>
@@ -235,13 +235,13 @@ const Expenses = () => {
       </div>
 
       {/* ── Overall Budget Progress ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        <div className="lg:col-span-2 bg-[#0A1128] rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 mb-6 sm:mb-10">
+        <div className="lg:col-span-2 bg-[#0A1128] rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white relative overflow-hidden shadow-2xl">
           <div className="relative z-10">
             <p className="text-blue-300 font-bold text-[10px] uppercase tracking-[0.2em] mb-4">
               Total Monthly Budget
             </p>
-            <h2 className="text-5xl font-black mb-10 tracking-tighter">
+            <h2 className="text-3xl sm:text-5xl font-black mb-6 sm:mb-10 tracking-tighter">
               ${totalLimit.toLocaleString()}
             </h2>
             <div className="space-y-4">
@@ -269,7 +269,7 @@ const Expenses = () => {
           <span className="text-sm font-bold">Loading budgets…</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {budgets.map((item) => {
             const { icon: Icon } = getCategoryMeta(item.category);
             const percentage = item.monthly_limit > 0
@@ -281,7 +281,7 @@ const Expenses = () => {
               <div
                 key={item.id}
                 onClick={() => openCategoryModal(item)}
-                className={`rounded-[2.5rem] p-8 border transition-all relative overflow-hidden cursor-pointer ${isOver ? 'bg-red-50 dark:bg-red-950/10 border-red-300 dark:border-red-900/50 shadow-red-100/10' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 shadow-sm hover:border-blue-200 dark:hover:border-blue-800'}`}
+                className={`rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-8 border transition-all relative overflow-hidden cursor-pointer ${isOver ? 'bg-red-50 dark:bg-red-950/10 border-red-300 dark:border-red-900/50 shadow-red-100/10' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 shadow-sm hover:border-blue-200 dark:hover:border-blue-800'}`}
               >
                 {isOver && (
                   <span className="absolute top-6 right-6 bg-red-500 text-white text-[8px] font-black px-2 py-1 rounded-lg uppercase animate-bounce">
@@ -330,7 +330,7 @@ const Expenses = () => {
           {/* Add New Category Button */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="border-2 border-dashed border-blue-400 dark:border-blue-800 rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/10 hover:border-blue-600 dark:hover:border-blue-555 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-all cursor-pointer group"
+            className="border-2 border-dashed border-blue-400 dark:border-blue-800 rounded-[1.5rem] sm:rounded-[2.5rem] flex flex-col items-center justify-center p-6 sm:p-8 text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/10 hover:border-blue-600 dark:hover:border-blue-555 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-all cursor-pointer group"
           >
             <Plus size={40} className="mb-3 group-hover:rotate-90 transition-transform duration-300" />
             <p className="text-xs font-black uppercase tracking-[0.2em]">Add Category</p>
@@ -341,7 +341,7 @@ const Expenses = () => {
       {/* -- Add Category Modal -- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[3rem] p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative">
+          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[1.5rem] sm:rounded-[3rem] p-5 sm:p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative mx-4 sm:mx-0">
             <button
               onClick={() => { setIsModalOpen(false); setError(''); }}
               className="absolute top-8 right-8 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white"
@@ -403,7 +403,7 @@ const Expenses = () => {
 
       {selectedCategory && (
         <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[3rem] p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative">
+          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[1.5rem] sm:rounded-[3rem] p-5 sm:p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative mx-4 sm:mx-0">
             <button
               onClick={closeCategoryModal}
               className="absolute top-8 right-8 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white"

@@ -151,15 +151,15 @@ const Settings = () => {
 
   return (
     <DashboardLayout title="Account Settings">
-      <div className="flex flex-col lg:flex-row gap-10">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
         
         {/*  Left Side: Navigation Tabs */}
-        <div className="lg:w-1/4 space-y-2">
+        <div className="lg:w-1/4 flex lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0">
           {sections.map((section) => (
             <button
               key={section.id}
               onClick={() => setActiveTab(section.id)} 
-              className={`w-full flex items-center gap-4 px-6 py-4 rounded-[1.5rem] text-sm font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-3 lg:gap-4 px-4 lg:px-6 py-3 lg:py-4 rounded-xl lg:rounded-[1.5rem] text-xs lg:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === section.id 
                 ? 'bg-blue-600 text-white shadow-xl shadow-blue-100 dark:shadow-none' 
                 : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white border border-transparent hover:border-slate-100 dark:hover:border-slate-800'
@@ -177,7 +177,7 @@ const Settings = () => {
           {activeTab === 'profile' && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
               {/* Profile Header */}
-              <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+              <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                   <div className="relative group">
                     <div className="w-32 h-32 bg-slate-100 dark:bg-slate-850 rounded-[2.5rem] overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl">
@@ -214,7 +214,7 @@ const Settings = () => {
               </div>
 
               {/* Personal Info Form */}
-              <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+              <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
                 <div className="flex items-center gap-3 mb-8">
                   <h4 className="text-lg font-black text-slate-900 dark:text-white">Personal Information</h4>
                   {loadingProfile && (
@@ -271,7 +271,7 @@ const Settings = () => {
           )}
 
           {activeTab === 'security' && (
-            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none animate-in fade-in slide-in-from-bottom-2 duration-300">
               <h4 className="text-lg font-black text-slate-900 dark:text-white mb-8">Security & Privacy</h4>
               <div className="space-y-4">
                 <SecurityItem icon={ShieldCheck} label="Two-Factor Authentication" status="Configure Security" />
@@ -283,14 +283,14 @@ const Settings = () => {
 
           {/*  Notifications Content */}
           {activeTab === 'notifications' && (
-            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none animate-in fade-in duration-300">
                <h4 className="text-lg font-black text-slate-900 dark:text-white mb-4">Notifications</h4>
                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Manage how and when you receive alerts from BudgetMate.</p>
             </div>
           )}
   
           {activeTab === 'preferences' && (
-            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none animate-in fade-in duration-300">
               <h4 className="text-lg font-black text-slate-900 dark:text-white mb-2">Preferences</h4>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-8">Customize your BudgetMate experience.</p>
 
@@ -328,7 +328,7 @@ const Settings = () => {
 
       {isPasswordModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm px-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-lg rounded-[2rem] bg-white dark:bg-slate-900 p-8 shadow-2xl border border-slate-100 dark:border-slate-800">
+          <div className="w-full max-w-lg rounded-[1.5rem] sm:rounded-[2rem] bg-white dark:bg-slate-900 p-5 sm:p-8 shadow-2xl border border-slate-100 dark:border-slate-800 mx-2 sm:mx-0">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <h4 className="text-xl font-black text-slate-900 dark:text-white">Change Password</h4>

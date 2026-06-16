@@ -242,13 +242,13 @@ const MyWallet = () => {
 
   return (
     <DashboardLayout title="My Wallet">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
 
         {/* -- Left ------------------------------------------------------------ */}
         <div className="lg:col-span-2 space-y-10">
 
           {/* visual card row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-700">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 animate-in fade-in duration-700">
             {loading ? (
               <div className="h-64 bg-slate-100 dark:bg-slate-800 rounded-[3rem] flex items-center justify-center">
                 <Loader2 className="animate-spin text-slate-400 dark:text-slate-500" size={32} />
@@ -289,8 +289,8 @@ const MyWallet = () => {
           </div>
 
           {/* linked accounts list */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
-            <div className="flex justify-between items-center mb-8">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 sm:mb-8">
               <h3 className="text-xl font-black text-slate-900 dark:text-white">Linked Accounts</h3>
               <button onClick={openAdd} className="text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
                 <Plus size={16} /> Add Account
@@ -326,7 +326,7 @@ const MyWallet = () => {
                   <div
                     key={acc.id}
                     onClick={() => setSelectedAcc(i)}
-                    className={`flex items-center justify-between p-6 rounded-[2rem] border transition-all cursor-pointer group ${
+                    className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border transition-all cursor-pointer group ${
                       selectedAcc === i
                         ? "border-blue-600 bg-blue-50/30 dark:bg-blue-950/20 shadow-lg shadow-blue-50/5"
                         : "border-slate-50 dark:border-slate-850 hover:border-slate-200 dark:hover:border-slate-700 bg-white dark:bg-slate-900"
@@ -348,7 +348,7 @@ const MyWallet = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-0">
                       <div className="text-right">
                         <p className="font-black text-slate-900 dark:text-white">
                           ${parseFloat(acc.balance).toLocaleString("en-US", { minimumFractionDigits: 2 })}
@@ -379,9 +379,9 @@ const MyWallet = () => {
 
         {/* -- Right ----------------------------------------------------------- */}
         <div className="space-y-8">
-          <div className="bg-[#0A1128] rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-[#0A1128] rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl relative overflow-hidden">
             <p className="text-blue-300 font-bold text-[10px] uppercase tracking-[0.2em] mb-2">Net Worth</p>
-            <h4 className="text-4xl font-black mb-8 tracking-tighter">${netWorth}</h4>
+            <h4 className="text-2xl sm:text-4xl font-black mb-6 sm:mb-8 tracking-tighter">${netWorth}</h4>
             <div className="space-y-4 relative z-10">
               <SummaryItem label="Total Accounts" amount={accounts.length.toString()} up />
               <SummaryItem
@@ -394,7 +394,7 @@ const MyWallet = () => {
             <Wallet size={120} className="absolute bottom-[-30px] right-[-30px] text-white/5 rotate-12" />
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm text-center relative overflow-hidden group">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-sm text-center relative overflow-hidden group">
             <div className="w-20 h-20 bg-blue-50 dark:bg-blue-950/30 rounded-[2rem] flex items-center justify-center mx-auto mb-6 group-hover:rotate-12 transition-transform">
               <Wallet className="text-blue-600 dark:text-blue-400" size={32} />
             </div>
@@ -412,7 +412,7 @@ const MyWallet = () => {
       {/* -- Add / Edit Modal ---------------------------------------------------- */}
       {modalMode && (
         <div className="fixed inset-0 bg-[#0A1128]/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[3rem] p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-[1.5rem] sm:rounded-[3rem] p-5 sm:p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 relative max-h-[90vh] overflow-y-auto mx-4 sm:mx-0">
             <button onClick={closeModal} className="absolute top-8 right-8 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
               <X size={24} />
             </button>
