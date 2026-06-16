@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { 
   ArrowRight, 
   Sparkles, 
@@ -10,16 +10,11 @@ import {
   Bell, 
   Calendar, 
   ChevronDown, 
-  Check, 
   Star, 
   Shield, 
   HelpCircle, 
   Activity, 
-  ArrowUpRight, 
-  ArrowDownRight,
-  Layers,
-  Search,
-  DollarSign
+  ArrowUpRight
 } from 'lucide-react';
 import Login from './Login';
 import Register from './Register';
@@ -148,6 +143,8 @@ const Home = () => {
   const [heroVisible, setHeroVisible] = useState(false);
   // Tab change animation key
   const [tabKey, setTabKey] = useState(0);
+  // 3D Model scene load state
+  const [modelLoaded, setModelLoaded] = useState(false);
 
   useEffect(() => {
     // Trigger hero animation on mount
@@ -160,6 +157,23 @@ const Home = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Listen for model-viewer load completion
+  useEffect(() => {
+    const viewer = document.getElementById('hero-3d-model-viewer');
+    if (!viewer) return;
+
+    const handleLoad = () => {
+      setModelLoaded(true);
+    };
+
+    viewer.addEventListener('load', handleLoad);
+    return () => {
+      if (viewer) {
+        viewer.removeEventListener('load', handleLoad);
+      }
+    };
+  }, [heroVisible]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -396,67 +410,39 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Floating Mock Dashboard */}
+        {/* 3D Model Column */}
         <div
-          className="lg:col-span-5 relative w-full flex justify-center"
+          className="lg:col-span-5 relative w-full h-[400px] sm:h-[500px] flex justify-center items-center"
           style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? 'none' : 'translateX(32px) scale(0.96)', transition: 'opacity 0.85s ease 200ms, transform 0.85s ease 200ms' }}
         >
-          <div className="relative w-full max-w-sm sm:max-w-md bg-[#0A1128] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-2xl overflow-hidden border border-white/10 group hover:shadow-blue-900/30 transition-shadow duration-500">
-            <div className="absolute -right-20 -top-20 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute -left-20 -bottom-20 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+          {/* Glassmorphic glowing background */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 rounded-[2rem] sm:rounded-[2.5rem] blur-xl -z-10 animate-pulse"></div>
+          
+          <div className="relative w-full h-full bg-white/5 dark:bg-slate-900/40 backdrop-blur-md rounded-[2rem] sm:rounded-[2.5rem] border border-slate-200/50 dark:border-white/10 shadow-2xl overflow-hidden flex items-center justify-center">
+            
+            {/* Loading skeleton placeholder */}
+            {!modelLoaded && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 bg-white/80 dark:bg-slate-950/80 z-20 transition-opacity duration-500">
+                <div className="w-12 h-12 border-4 border-blue-600/35 border-t-blue-600 rounded-full animate-spin"></div>
+                <div className="text-center space-y-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Loading 3D Model</p>
+                  <p className="text-[10px] text-slate-400/80 font-medium">Preparing interactive elements...</p>
+                </div>
               </div>
-              <span className="text-[10px] font-semibold tracking-widest text-blue-300 uppercase">Interactive Demo</span>
-            </div>
+            )}
 
-            {/* Balance with shimmer */}
-            <div className="space-y-2 mb-6">
-              <p className="text-blue-300 text-[10px] uppercase font-bold tracking-widest">Total Net Worth</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl sm:text-3xl font-black tracking-tight balance-shimmer">$48,250.00</span>
-                <span className="text-[10px] font-bold text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
-                  <ArrowUpRight size={10} /> 12.4%
-                </span>
-              </div>
-            </div>
-
-            {/* Animated bars */}
-            <div className="h-24 flex items-end justify-between gap-2.5 mb-8 px-2">
-              {[35, 48, 40, 65, 52, 85].map((h, i) => (
-                <div
-                  key={i}
-                  className={`w-full rounded-t-lg transition-all hover:brightness-125 ${i === 5 ? 'bg-blue-600 shadow-lg shadow-blue-500/30' : 'bg-blue-500/30'} hero-bar`}
-                  style={{ height: `${h}%`, animationDelay: `${0.8 + i * 0.1}s` }}
-                />
-              ))}
-            </div>
-
-            {/* Floating widget: Monthly Spend — float animation */}
-            <div className="absolute right-[-1.5rem] bottom-16 bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-4 rounded-2xl shadow-xl shadow-blue-950/20 dark:shadow-none border border-slate-100 dark:border-slate-800 max-w-[170px] animate-float-alt hover:scale-105 transition-transform duration-300 hidden sm:block">
-              <div className="flex items-center justify-between gap-4 mb-2">
-                <div className="p-1.5 bg-blue-50 dark:bg-blue-950/20 text-blue-600 rounded-lg"><Wallet size={14} /></div>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Monthly Limit</span>
-              </div>
-              <p className="text-sm font-black text-slate-900">$2,450.00</p>
-              <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                <div className="bg-blue-600 h-full rounded-full" style={{ width: '72%', animation: 'barGrow 1.4s ease 1.2s both' }}></div>
-              </div>
-            </div>
-
-            {/* Floating widget: Transaction — opposite float */}
-            <div className="absolute left-[-1.5rem] top-28 bg-white dark:bg-slate-900 text-slate-900 dark:text-white py-3 px-4 rounded-2xl shadow-xl shadow-blue-950/20 dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-3 max-w-[190px] animate-float hover:scale-105 transition-transform duration-300 hidden sm:flex">
-              <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-500 flex items-center justify-center font-bold text-xs"><Activity size={14} /></div>
-              <div>
-                <p className="text-xs font-bold text-slate-850 dark:text-slate-200">Starbucks Coffee</p>
-                <p className="text-[9px] text-slate-400 font-semibold">Just now - Expense</p>
-              </div>
-              <p className="text-xs font-black text-slate-900 dark:text-white">-$4.50</p>
-            </div>
+            {/* Google Model Viewer component */}
+            <model-viewer
+              id="hero-3d-model-viewer"
+              src="/low-poly_truck_car_drifter.glb"
+              alt="Low-poly truck car drifter"
+              auto-rotate
+              camera-controls
+              shadow-intensity="1.5"
+              interaction-prompt="none"
+              touch-action="pan-y"
+              class="w-full h-full"
+            ></model-viewer>
           </div>
         </div>
       </section>
